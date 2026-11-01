@@ -2,7 +2,9 @@
 
 import { createContext, useContext } from "react";
 import { useStore } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import type { AppConfigData } from "@miseboard/config";
+import { buildScope } from "./connect-engine";
 import type { RuntimeState, RuntimeStore } from "./runtime-store";
 
 export interface RuntimeContextValue {
@@ -21,4 +23,8 @@ export function useRuntime() {
 
 export function useRuntimeStore<TSelected>(selector: (state: RuntimeState) => TSelected) {
   return useStore(useRuntime().store, selector);
+}
+
+export function useRuntimeScope() {
+  return useRuntimeStore(useShallow(buildScope));
 }

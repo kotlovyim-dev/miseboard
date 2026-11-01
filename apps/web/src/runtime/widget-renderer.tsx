@@ -27,6 +27,7 @@ export function WidgetRenderer({ widget }: { widget: WidgetConfig }) {
       errors={[...missingDefinition, ...errors, ...queryErrors]}
       isLoading={queries.some((query) => query.state?.isLoading)}
       emptyMessage={describeEmpty(props.data, queryIds)}
+      skeleton={definition && <definition.Skeleton />}
       onRetry={
         failedQueries.length
           ? () => failedQueries.forEach((query) => retryQuery(query.queryId))

@@ -2,7 +2,6 @@
 
 import { CircleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { WidgetErrorBoundary } from "./widget-error-boundary";
 
@@ -10,16 +9,16 @@ interface WidgetFrameProps {
   errors: string[];
   isLoading: boolean;
   emptyMessage: React.ReactNode;
+  skeleton: React.ReactNode;
   onRetry?: () => void;
   children: React.ReactNode;
 }
-
-const SKELETON_ROWS = 5;
 
 export function WidgetFrame({
   errors,
   isLoading,
   emptyMessage,
+  skeleton,
   onRetry,
   children,
 }: WidgetFrameProps) {
@@ -35,7 +34,7 @@ export function WidgetFrame({
       )}
     >
       {hasErrors && <ErrorState messages={errors} onRetry={onRetry} />}
-      {isBusy && <LoadingState />}
+      {isBusy && <LoadingState>{skeleton}</LoadingState>}
       {!hasErrors && !isLoading && <WidgetBody emptyMessage={emptyMessage}>{children}</WidgetBody>}
     </section>
   );
@@ -74,14 +73,11 @@ function ErrorState({ messages, onRetry }: { messages: string[]; onRetry?: () =>
   );
 }
 
-function LoadingState() {
+function LoadingState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="space-y-3">
+    <>
       <span className="sr-only">Loading</span>
-      <Skeleton className="h-4 w-1/3" />
-      {Array.from({ length: SKELETON_ROWS }, (_, row) => (
-        <Skeleton key={row} className="h-3 w-full" />
-      ))}
-    </div>
+      {children}
+    </>
   );
 }

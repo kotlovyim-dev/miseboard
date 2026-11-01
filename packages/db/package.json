@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file-if-exists=../../.env src/run-migrations.ts",
-    "db:seed": "tsx --env-file-if-exists=../../.env src/seed/run-seed.ts"
+    "db:seed": "tsx --env-file-if-exists=../../.env src/seed/run-seed.ts",
+    "test": "node --env-file-if-exists=../../.env node_modules/vitest/vitest.mjs run"
   },
   "dependencies": {
     "@miseboard/config": "workspace:*",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/pg": "^8.23.1",
     "drizzle-kit": "~0.31.11",
-    "tsx": "~4.23.15"
+    "tsx": "~4.23.15",
+    "vitest": "^5.0.5"
   }
 }

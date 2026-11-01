@@ -80,3 +80,17 @@ export function sortTopologically(graph: DependencyGraph, excluded: ReadonlySet<
   }
   return order;
 }
+
+export function collectDownstream(graph: DependencyGraph, id: string): Set<string> {
+  const downstream = new Set<string>();
+  const pending = [id];
+  for (const current of pending) {
+    graph.dependents.get(current)?.forEach((dependent) => {
+      if (downstream.has(dependent)) return;
+      downstream.add(dependent);
+      pending.push(dependent);
+    });
+  }
+  downstream.delete(id);
+  return downstream;
+}

@@ -1,6 +1,6 @@
 import { evaluateTemplate } from "./evaluate-template";
 import type { EvaluationOptions, EvaluationResult } from "./evaluate-template";
-import { buildDependencyGraph, findCycles, sortTopologically } from "./graph";
+import { buildDependencyGraph, collectDownstream, findCycles, sortTopologically } from "./graph";
 import type { EngineNode } from "./graph";
 import type { Scope } from "./interpret";
 
@@ -12,6 +12,8 @@ export interface EngineOptions extends EvaluationOptions {
 }
 export interface Engine {
   evaluateAll(state: Scope): Evaluations;
+  update(changedId: string, state: Scope): Evaluations;
+  dependentsOf(id: string): string[];
   referencesTo(id: string): string[];
 }
 
@@ -51,6 +53,14 @@ export function createEngine(
 
   return {
     evaluateAll: (state) => evaluateIds([...order, ...cycleMessages.keys()], state),
+    update: (changedId, state) => {
+      const downstream = collectDownstream(graph, changedId);
+      return evaluateIds(
+        order.filter((id) => downstream.has(id)),
+        state,
+      );
+    },
+    dependentsOf: (id) => [...collectDownstream(graph, id)],
     referencesTo: (id) => [...(graph.dependents.get(id) ?? [])],
   };
 }

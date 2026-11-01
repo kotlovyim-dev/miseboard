@@ -1,6 +1,7 @@
 import { EvaluationError } from "./evaluation-error";
 import { defaultHelpers } from "./helpers";
 import type { HelperRegistry } from "./helpers";
+import { TOO_COMPLEX_ERROR } from "./limits";
 import { interpret } from "./interpret";
 import type { Scope } from "./interpret";
 import { parseExpression } from "./parse";
@@ -46,12 +47,13 @@ function evaluateBlock(
   if (!parsed.ok)
     return { ok: false, error: parsed.error, at: segment.offset + OPEN.length + parsed.at };
 
-  const validation = validateExpression(parsed.ast, new Set(Object.keys(helpers)));
-  if (!validation.ok) return { ok: false, error: validation.error, at: segment.offset };
-
   try {
+    const validation = validateExpression(parsed.ast, new Set(Object.keys(helpers)));
+    if (!validation.ok) return { ok: false, error: validation.error, at: segment.offset };
     return { ok: true, value: interpret(parsed.ast, { scope, helpers, context: { now } }) };
   } catch (error) {
+    if (error instanceof RangeError)
+      return { ok: false, error: TOO_COMPLEX_ERROR, at: segment.offset };
     if (!(error instanceof EvaluationError)) throw error;
     return { ok: false, error: error.message, at: segment.offset };
   }

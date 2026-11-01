@@ -122,3 +122,13 @@ describe("evaluateTemplate", () => {
 function ones(length: number) {
   return new Array(length).fill("1").join(",");
 }
+
+describe("evaluateTemplate nesting", () => {
+  it("reports an overly long chain as an error instead of throwing", () => {
+    const chain = Array(50_000).fill("1").join(" + ");
+
+    const result = evaluateTemplate(`{{ ${chain} }}`, {});
+
+    expect(result).toMatchObject({ ok: false, error: "Expression is too complex" });
+  });
+});

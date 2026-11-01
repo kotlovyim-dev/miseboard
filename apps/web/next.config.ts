@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   agentRules: false,
   outputFileTracingRoot: repoRoot,
-  transpilePackages: ["@miseboard/schema"],
+  transpilePackages: ["@miseboard/schema", "@miseboard/config"],
   typedRoutes: true,
   async rewrites() {
     if (process.env.NODE_ENV === "production") return [];

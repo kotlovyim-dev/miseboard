@@ -14,9 +14,11 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n": typeof types.VenueCountDocument,
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": typeof types.OrderStatusValueFragmentDoc,
 };
 const documents: Documents = {
+    "\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n": types.VenueCountDocument,
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
 };
 
@@ -34,6 +36,10 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n"): (typeof documents)["\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

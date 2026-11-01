@@ -7,7 +7,8 @@ describe("parseAppConfig", () => {
   it("returns the parsed config for valid input", () => {
     const result = parseAppConfig(fullConfig);
 
-    expect(result.ok && result.config.widgets).toHaveLength(5);
+    if (!result.ok) throw new Error(result.message);
+    expect(result.config.widgets).toHaveLength(5);
   });
 
   it("accepts the empty config", () => {
@@ -21,7 +22,8 @@ describe("parseAppConfig", () => {
       widgets: [],
     });
 
-    expect(result.ok && result.config.queries[0]).toMatchObject({
+    if (!result.ok) throw new Error(result.message);
+    expect(result.config.queries[0]).toMatchObject({
       variables: {},
       trigger: "onLoad",
     });
@@ -33,8 +35,8 @@ describe("parseAppConfig", () => {
       widgets: [{ ...textWidget, id: "Bad-Id" }],
     });
 
-    expect(result.ok).toBe(false);
-    expect(!result.ok && result.message).toContain("widgets[0].id");
+    if (result.ok) throw new Error("expected the config to be rejected");
+    expect(result.message).toContain("widgets[0].id");
   });
 
   it("rejects a width that is not allowed", () => {
@@ -43,7 +45,8 @@ describe("parseAppConfig", () => {
       widgets: [{ ...textWidget, width: 5 }],
     });
 
-    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("expected the config to be rejected");
+    expect(result.message).toContain("widgets[0].width");
   });
 
   it("names the duplicate id shared by a widget and a query", () => {

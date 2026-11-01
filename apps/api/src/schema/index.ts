@@ -1,6 +1,8 @@
 import { roles } from "../context";
 import type { Role } from "../context";
 import { builder } from "./builder";
+import "./venue";
+import "./menu-item";
 
 const RoleEnum = builder.enumType("Role", { values: roles });
 

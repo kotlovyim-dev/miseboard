@@ -1,5 +1,5 @@
 import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
-import { orders } from "@miseboard/db";
+import { orderItems, orders } from "@miseboard/db";
 import type { Database, OrderStatus } from "@miseboard/db";
 import type { OrderCursor } from "../connections/cursor";
 
@@ -29,6 +29,11 @@ export async function countOrders(db: Database, filters: OrderFilters) {
 
 export function findOrdersByIds(db: Database, ids: string[]) {
   return db.select().from(orders).where(inArray(orders.id, ids));
+}
+
+export async function findOrderItemsByOrderIds(db: Database, orderIds: string[]) {
+  const rows = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds));
+  return orderIds.map((orderId) => rows.filter((row) => row.orderId === orderId));
 }
 
 function matchesFilters({ venueId, status }: OrderFilters) {

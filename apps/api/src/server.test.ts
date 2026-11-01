@@ -19,4 +19,14 @@ describe("graphql server", () => {
 
     expect(await response.json()).toEqual({ data: { viewer: { role: "ADMIN" } } });
   });
+
+  it("rejects a query deeper than 6 levels", async () => {
+    const response = await postQuery("{ viewer { role { a { b { c { d { e } } } } } } }");
+    const body = await response.json();
+
+    expect(body.errors.map((error: { message: string }) => error.message)).toContainEqual(
+      expect.stringMatching(/depth/i),
+    );
+    expect(body.data).toBeUndefined();
+  });
 });

@@ -52,7 +52,7 @@ export const orders = pgTable(
       .references(() => venues.id),
     status: orderStatus("status").notNull().default("NEW"),
     totalKopecks: integer("total_kopecks").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true, precision: 3 }).notNull().defaultNow(),
   },
   (table) => [
     index("orders_venue_created_at_id_idx").on(table.venueId, table.createdAt.desc(), table.id),
@@ -98,7 +98,7 @@ export const apps = pgTable(
     slug: text("slug").notNull(),
     config: jsonb("config").$type<unknown>().notNull(),
     isTemplate: boolean("is_template").notNull().default(false),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true, precision: 3 }).notNull().defaultNow(),
   },
   (table) => [uniqueIndex("apps_slug_idx").on(table.slug)],
 );

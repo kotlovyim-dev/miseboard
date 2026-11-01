@@ -1,4 +1,4 @@
-import { orders } from "@miseboard/db";
+import { orders, venues } from "@miseboard/db";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
 
@@ -17,6 +17,15 @@ const PAGE_QUERY = `
   query ($first: Int, $after: String) {
     orders(first: $first, after: $after) {
       pageInfo { hasNextPage endCursor }
+      edges { cursor node { id createdAt } }
+    }
+  }
+`;
+
+const TIED_PAGE_QUERY = `
+  query ($venueId: ID, $after: String) {
+    orders(first: 1, venueId: $venueId, after: $after) {
+      pageInfo { endCursor }
       edges { cursor node { id createdAt } }
     }
   }
@@ -68,6 +77,25 @@ describe("orders connection", () => {
     const after = await fetchPage(20, first.pageInfo.endCursor);
 
     expect(nodeIds(after.edges)).toEqual(nodeIds(before.edges));
+  });
+
+  it("pages through orders created in one transaction without skipping or repeating", async () => {
+    const [venue] = await db.insert(venues).values({ name: "Tie", city: "Test" }).returning();
+    const venueId = venue?.id ?? "";
+    await db.transaction(async (tx) => {
+      await tx.insert(orders).values([1, 2, 3].map(() => ({ venueId, totalKopecks: 100 })));
+    });
+    const globalVenueId = Buffer.from(`Venue:${venueId}`).toString("base64");
+    const seen: string[] = [];
+    let after: string | undefined;
+
+    for (let index = 0; index < 3; index += 1) {
+      const data = await runQuery(TIED_PAGE_QUERY, { venueId: globalVenueId, after });
+      seen.push(...nodeIds(data.orders.edges));
+      after = data.orders.pageInfo.endCursor;
+    }
+
+    expect(new Set(seen).size).toBe(3);
   });
 
   it("costs at most four queries for a page with venue, items and menu items", async () => {

@@ -10,14 +10,19 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@apollo/client": "~4.3.5",
+    "@apollo/client-integration-nextjs": "~0.14.5",
+    "@miseboard/schema": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "graphql": "~16.14.2",
     "lucide-react": "^1.66.0",
     "next": "~16.4.3",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.8.1",
     "react": "~19.3.1",
     "react-dom": "~19.3.1",
+    "rxjs": "^7.8.2",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0"
   },

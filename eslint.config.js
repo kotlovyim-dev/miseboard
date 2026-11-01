@@ -1,7 +1,10 @@
 import js from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+
+const webFiles = ["apps/web/**/*.{ts,tsx}"];
 
 export default defineConfig([
   globalIgnores([
@@ -22,5 +25,11 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
     },
+  },
+  ...nextVitals.map((config) => ({ ...config, files: webFiles })),
+  {
+    files: webFiles,
+    settings: { next: { rootDir: "apps/web" } },
+    rules: { "react/no-danger": "error" },
   },
 ]);

@@ -46,4 +46,5 @@ export interface WidgetDefinition<TProps extends WidgetProps = WidgetProps> {
   initialState(props: TProps): WidgetState;
   inspectorFields: InspectorField[];
   Component: ComponentType<WidgetComponentProps>;
+  Skeleton: ComponentType;
 }

@@ -11,7 +11,11 @@ export type HelperRegistry = Readonly<Record<string, Helper>>;
 
 const KOPECKS_PER_HRYVNIA = 100;
 
-const uahFormat = new Intl.NumberFormat("uk-UA", { style: "currency", currency: "UAH" });
+const uahFormat = new Intl.NumberFormat("uk-UA", {
+  style: "currency",
+  currency: "UAH",
+  currencyDisplay: "narrowSymbol",
+});
 const dateFormat = new Intl.DateTimeFormat("uk-UA", {
   dateStyle: "medium",
   timeStyle: "short",

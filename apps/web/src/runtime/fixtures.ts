@@ -40,4 +40,5 @@ export const tableDefinition: WidgetDefinition = {
   initialState: () => ({}),
   inspectorFields: [],
   Component: () => null,
+  Skeleton: () => null,
 };

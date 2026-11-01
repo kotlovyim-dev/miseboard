@@ -57,6 +57,7 @@ const StatWidget = z.object({
     label: Template,
     value: Template,
     format: z.enum(["number", "uah", "percent"]),
+    trend: Template.optional(),
   }),
 });
 

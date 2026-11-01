@@ -23,6 +23,10 @@ const STATUS_STYLES: Record<OrderStatus, StatusStyle> = {
   CANCELLED: { label: "Cancelled", tint: "bg-destructive/12", dot: "bg-destructive" },
 };
 
+export function isOrderStatus(value: unknown): value is OrderStatus {
+  return typeof value === "string" && Object.hasOwn(STATUS_STYLES, value);
+}
+
 export function StatusBadge({ status }: { status: OrderStatus }) {
   const { label, tint, dot } = STATUS_STYLES[status];
 

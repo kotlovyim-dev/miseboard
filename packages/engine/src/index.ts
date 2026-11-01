@@ -9,3 +9,8 @@ export type { EvaluationOptions, EvaluationResult } from "./evaluate-template";
 export { defaultHelpers } from "./helpers";
 export type { Helper, HelperContext, HelperRegistry } from "./helpers";
 export type { Scope } from "./interpret";
+export { extractDependencies } from "./dependencies";
+export type { Dependency, DependencyOptions } from "./dependencies";
+export { createEngine } from "./engine";
+export type { Engine, EngineOptions, Evaluations, NodeEvaluation } from "./engine";
+export type { EngineNode } from "./graph";

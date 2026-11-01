@@ -11,15 +11,16 @@
     "dev": "pnpm -r --parallel --if-present dev",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --workspace-concurrency=1 --if-present test",
-    "codegen": "pnpm -r --if-present codegen",
-    "codegen:check": "pnpm -r --if-present codegen:check",
+    "codegen": "pnpm --filter @miseboard/api schema:print && pnpm --filter @miseboard/schema codegen",
+    "codegen:check": "pnpm codegen && git add -N packages/schema && git diff --exit-code -- packages/schema",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm codegen:check",
     "db:generate": "pnpm -r --if-present db:generate",
     "db:migrate": "pnpm -r --if-present db:migrate",
     "db:seed": "pnpm -r --if-present db:seed",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "codegen:watch": "pnpm --filter @miseboard/schema codegen:watch"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -4,3 +4,4 @@ dist
 coverage
 packages/schema/src/gql
 packages/db/drizzle
+packages/schema/schema.graphql

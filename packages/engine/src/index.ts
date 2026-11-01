@@ -4,3 +4,8 @@ export { parseTemplate } from "./template";
 export type { ExpressionSegment, Failure, ParsedTemplate, Segment, TextSegment } from "./template";
 export { validateExpression } from "./validate";
 export type { Validation } from "./validate";
+export { evaluateTemplate } from "./evaluate-template";
+export type { EvaluationOptions, EvaluationResult } from "./evaluate-template";
+export { defaultHelpers } from "./helpers";
+export type { Helper, HelperContext, HelperRegistry } from "./helpers";
+export type { Scope } from "./interpret";

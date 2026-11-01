@@ -1,4 +1,4 @@
-const OPEN = "{{";
+export const OPEN = "{{";
 const CLOSE = "}}";
 
 export interface TextSegment {

@@ -1,0 +1,37 @@
+{
+  "name": "@miseboard/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/main.ts",
+    "build": "node build.mjs",
+    "start": "node dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@escape.tech/graphql-armor-max-aliases": "^2.6.2",
+    "@escape.tech/graphql-armor-max-depth": "^2.4.2",
+    "@escape.tech/graphql-armor-max-tokens": "^2.5.1",
+    "@miseboard/db": "workspace:*",
+    "@pothos/core": "~4.16.0",
+    "@pothos/plugin-dataloader": "^4.5.0",
+    "@pothos/plugin-relay": "^4.8.1",
+    "@pothos/plugin-scope-auth": "^4.2.2",
+    "@pothos/plugin-zod": "^4.3.2",
+    "drizzle-orm": "0.45.4",
+    "graphql": "~16.14.2",
+    "graphql-scalars": "^2.0.1",
+    "graphql-yoga": "~6.0.1",
+    "pg": "~8.23.1",
+    "pino": "^10.4.0",
+    "uuid": "^14.0.3",
+    "zod": "~4.6.7"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "tsx": "~4.23.15",
+    "vitest": "^5.0.5"
+  }
+}

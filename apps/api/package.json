@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch --env-file-if-exists=../../.env src/main.ts",
     "build": "node build.mjs",
+    "schema:print": "tsx src/scripts/print-schema.ts",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
     "test": "node --env-file-if-exists=../../.env node_modules/vitest/vitest.mjs run --no-file-parallelism"

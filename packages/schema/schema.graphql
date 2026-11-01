@@ -1,0 +1,107 @@
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type InventoryItem implements Node {
+  id: ID!
+  isLow: Boolean!
+  minQty: Float!
+  name: String!
+  qty: Float!
+  unit: String!
+  venue: Venue!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type MenuItem implements Node {
+  category: String!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  price: Int!
+}
+
+interface Node {
+  id: ID!
+}
+
+type Order implements Node {
+  createdAt: DateTime!
+  id: ID!
+  items: [OrderItem!]!
+  status: OrderStatus!
+  total: Int!
+  venue: Venue!
+}
+
+type OrderConnection {
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type OrderEdge {
+  cursor: String!
+  node: Order!
+}
+
+type OrderItem {
+  menuItem: MenuItem!
+  price: Int!
+  qty: Int!
+}
+
+enum OrderStatus {
+  CANCELLED
+  NEW
+  PREPARING
+  READY
+  SERVED
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Query {
+  menuItems(category: String): [MenuItem!]!
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
+  orders(after: String, first: Int = 20, status: OrderStatus, venueId: ID): OrderConnection!
+  venue(id: ID!): Venue
+  venues: [Venue!]!
+  viewer: Viewer!
+}
+
+type RevenuePoint {
+  day: DateTime!
+  orders: Int!
+  total: Int!
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  VIEWER
+}
+
+type Venue implements Node {
+  city: String!
+  id: ID!
+  inventory(lowStockOnly: Boolean = false): [InventoryItem!]!
+  name: String!
+  orders(after: String, first: Int = 20, status: OrderStatus): OrderConnection!
+  revenue(from: DateTime!, to: DateTime!): [RevenuePoint!]!
+}
+
+type Viewer {
+  role: Role!
+}

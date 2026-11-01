@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./infra/db/create-test-db.sql:/docker-entrypoint-initdb.d/create-test-db.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U miseboard -d miseboard"]
       interval: 5s

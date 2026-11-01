@@ -6,9 +6,9 @@ import { apps, inventoryItems, orders, venues } from "../schema";
 import { resetDemo } from "./reset";
 import { seedDatabase, seedIfEmpty } from "./seed";
 
-const url = process.env.DATABASE_URL;
+const url = process.env.TEST_DATABASE_URL;
 if (!url) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error("TEST_DATABASE_URL is not set; point it at a dedicated test database");
 }
 
 const { db, pool } = createDatabase(url);

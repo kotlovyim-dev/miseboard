@@ -1,0 +1,29 @@
+{$SITE_ADDRESS} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		-Server
+	}
+
+	handle /graphql {
+		rate_limit {
+			zone graphql {
+				key {http.request.remote.host}
+				window 1s
+				events 30
+			}
+		}
+		reverse_proxy api:4000
+	}
+
+	handle /healthz {
+		reverse_proxy api:4000
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

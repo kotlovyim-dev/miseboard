@@ -1,0 +1,24 @@
+"use client";
+
+import { createContext, useContext } from "react";
+import { useStore } from "zustand";
+import type { AppConfigData } from "@miseboard/config";
+import type { RuntimeState, RuntimeStore } from "./runtime-store";
+
+export interface RuntimeContextValue {
+  store: RuntimeStore;
+  config: AppConfigData;
+  retryQuery: (queryId: string) => void;
+}
+
+export const RuntimeContext = createContext<RuntimeContextValue | null>(null);
+
+export function useRuntime() {
+  const runtime = useContext(RuntimeContext);
+  if (!runtime) throw new Error("useRuntime must be used within AppRuntimeProvider");
+  return runtime;
+}
+
+export function useRuntimeStore<TSelected>(selector: (state: RuntimeState) => TSelected) {
+  return useStore(useRuntime().store, selector);
+}

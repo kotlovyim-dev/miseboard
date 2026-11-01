@@ -22,6 +22,12 @@ export const sampleConfig = AppConfig.parse({
         columns: [{ key: "status", label: "Status", cell: "{{ row.status }}" }],
       },
     },
+    {
+      id: "venueSelect",
+      type: "select",
+      width: 3,
+      props: { options: "[]", labelKey: "name", valueKey: "id" },
+    },
     { id: "notes", type: "text", width: 4, props: { content: "Hello" } },
   ],
 });

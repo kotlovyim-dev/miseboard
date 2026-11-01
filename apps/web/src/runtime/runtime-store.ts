@@ -13,7 +13,6 @@ export interface RuntimeState {
   widgetStates: Record<string, WidgetState>;
   queryStates: Record<string, QueryState>;
   evaluations: Evaluations;
-  setRole: (role: string) => void;
   setWidgetState: (widgetId: string, state: WidgetState) => void;
   setQueryState: (queryId: string, state: QueryState) => void;
   mergeEvaluations: (changes: Evaluations) => void;
@@ -27,7 +26,6 @@ export function createRuntimeStore(initial: InitialRuntimeState) {
   return createStore<RuntimeState>()((set) => ({
     ...initial,
     evaluations: new Map(),
-    setRole: (role) => set({ role }),
     setWidgetState: (widgetId, state) =>
       set((current) => ({ widgetStates: { ...current.widgetStates, [widgetId]: state } })),
     setQueryState: (queryId, state) =>

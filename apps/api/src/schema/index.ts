@@ -4,6 +4,7 @@ import { builder } from "./builder";
 import "./venue";
 import "./menu-item";
 import "./inventory-item";
+import "./revenue-point";
 
 const RoleEnum = builder.enumType("Role", { values: roles });
 

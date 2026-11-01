@@ -46,6 +46,18 @@ describe("AppConfig", () => {
     expect(query?.trigger).toBe("onLoad");
     expect(widget?.type === "table" && widget.props.pageSize).toBe(10);
   });
+
+  it.each([
+    [40, true],
+    [41, false],
+  ])("with %i widgets the config validity is %s", (count, isValid) => {
+    const widgets = Array.from({ length: count }, (_, index) => ({
+      ...textWidget,
+      id: `text${index}`,
+    }));
+
+    expect(AppConfig.safeParse({ ...fullConfig, widgets }).success).toBe(isValid);
+  });
 });
 
 describe("WidgetDef", () => {
@@ -68,15 +80,21 @@ describe("WidgetDef", () => {
     expect(WidgetDef.safeParse({ ...textWidget, width }).success).toBe(false);
   });
 
-  it("rejects a page size outside 5 to 100", () => {
-    const props = { ...tableWidget.props, pageSize: 4 };
+  it.each([5, 100])("accepts a page size of %i", (pageSize) => {
+    const props = { ...tableWidget.props, pageSize };
+
+    expect(WidgetDef.safeParse({ ...tableWidget, props }).success).toBe(true);
+  });
+
+  it.each([4, 101])("rejects a page size of %i", (pageSize) => {
+    const props = { ...tableWidget.props, pageSize };
 
     expect(WidgetDef.safeParse({ ...tableWidget, props }).success).toBe(false);
   });
 });
 
 describe("IdSchema", () => {
-  it.each(["table1", "venueSelect", "orders_query"])("accepts %s", (id) => {
+  it.each(["table1", "venueSelect", "orders_query", `a${"b".repeat(39)}`])("accepts %j", (id) => {
     expect(IdSchema.safeParse(id).success).toBe(true);
   });
 

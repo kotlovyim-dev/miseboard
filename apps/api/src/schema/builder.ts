@@ -9,12 +9,14 @@ import type { Context } from "../context";
 export const builder = new SchemaBuilder<{
   Context: Context;
   AuthScopes: { admin: boolean; manager: boolean };
+  DefaultFieldNullability: false;
   Scalars: {
     DateTime: { Input: Date; Output: Date };
     JSON: { Input: unknown; Output: unknown };
   };
 }>({
   plugins: [ScopeAuthPlugin, RelayPlugin, DataloaderPlugin, ZodPlugin],
+  defaultFieldNullability: false,
   relay: {},
   scopeAuth: {
     authScopes: (context) => ({

@@ -1,12 +1,17 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
+  jsonb,
+  numeric,
   pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { v7 } from "uuid";
@@ -70,8 +75,38 @@ export const orderItems = pgTable(
   (table) => [primaryKey({ columns: [table.orderId, table.menuItemId] })],
 );
 
+export const inventoryItems = pgTable(
+  "inventory_items",
+  {
+    id: primaryId(),
+    venueId: uuid("venue_id")
+      .notNull()
+      .references(() => venues.id),
+    name: text("name").notNull(),
+    unit: text("unit").notNull(),
+    qty: numeric("qty", { mode: "number" }).notNull(),
+    minQty: numeric("min_qty", { mode: "number" }).notNull(),
+  },
+  (table) => [check("inventory_items_qty_non_negative", sql`${table.qty} >= 0`)],
+);
+
+export const apps = pgTable(
+  "apps",
+  {
+    id: primaryId(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    config: jsonb("config").$type<unknown>().notNull(),
+    isTemplate: boolean("is_template").notNull().default(false),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("apps_slug_idx").on(table.slug)],
+);
+
 export type Venue = typeof venues.$inferSelect;
 export type MenuItem = typeof menuItems.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type OrderItem = typeof orderItems.$inferSelect;
+export type InventoryItem = typeof inventoryItems.$inferSelect;
+export type App = typeof apps.$inferSelect;
 export type OrderStatus = (typeof orderStatuses)[number];

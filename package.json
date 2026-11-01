@@ -13,6 +13,7 @@
     "test": "pnpm -r --if-present test",
     "codegen": "pnpm -r --if-present codegen",
     "codegen:check": "pnpm -r --if-present codegen:check",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm codegen:check",
     "db:generate": "pnpm -r --if-present db:generate",
     "db:migrate": "pnpm -r --if-present db:migrate",
     "db:seed": "pnpm -r --if-present db:seed",

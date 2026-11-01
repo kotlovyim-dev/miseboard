@@ -1,35 +1,11 @@
-import { createDatabase, runMigrations, seedDatabase } from "@miseboard/db";
-import { sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createGraphqlServer } from "./server";
+import { createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
 
-const url = process.env.TEST_DATABASE_URL;
-if (!url) {
-  throw new Error("TEST_DATABASE_URL is not set; point it at a dedicated test database");
-}
-
-const { db, pool } = createDatabase(url);
-const yoga = createGraphqlServer(db);
+const { db, pool } = createTestDatabase();
+const { query: runQuery } = createTestClient(db);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-async function runQuery(query: string, variables?: Record<string, unknown>) {
-  const response = await yoga.fetch("http://localhost/graphql", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
-  const body = await response.json();
-  expect(body.errors).toBeUndefined();
-  return body.data;
-}
-
-beforeAll(async () => {
-  await runMigrations(db);
-  await db.execute(
-    sql`truncate table order_items, orders, inventory_items, menu_items, venues, apps cascade`,
-  );
-  await seedDatabase(db, new Date());
-});
+beforeAll(() => seedTestDatabase(db));
 afterAll(() => pool.end());
 
 describe("catalog queries", () => {

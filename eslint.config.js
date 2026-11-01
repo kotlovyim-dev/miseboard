@@ -4,7 +4,13 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
-  globalIgnores(["**/dist/", "**/.next/", "**/coverage/", "packages/schema/src/gql/"]),
+  globalIgnores([
+    "**/dist/",
+    "**/.next/",
+    "**/coverage/",
+    "packages/schema/src/gql/",
+    "packages/db/drizzle/",
+  ]),
   {
     linterOptions: { noInlineConfig: true },
     languageOptions: { globals: globals.node },

@@ -66,6 +66,10 @@ function collectNames(expression: Ast): Set<string> {
         return node satisfies never;
     }
   };
-  visit(expression);
+  try {
+    visit(expression);
+  } catch (error) {
+    if (!(error instanceof RangeError)) throw error;
+  }
   return names;
 }

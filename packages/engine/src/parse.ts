@@ -1,4 +1,5 @@
 import jsep from "jsep";
+import { TOO_COMPLEX_ERROR } from "./limits";
 import { BINARY_PRECEDENCE, UNARY_OPERATORS } from "./operators";
 import type { Failure } from "./template";
 
@@ -35,6 +36,7 @@ function parseUncached(source: string): ParsedExpression | Failure {
   try {
     return { ok: true, ast: jsep(source) };
   } catch (error) {
+    if (error instanceof RangeError) return { ok: false, error: TOO_COMPLEX_ERROR, at: 0 };
     if (!isJsepError(error)) throw error;
     return { ok: false, error: error.description, at: error.index };
   }

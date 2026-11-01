@@ -1,0 +1,56 @@
+const dishesByCategory = {
+  Starters: [
+    ["Salo with rye bread", 18000],
+    ["Marinated herring", 16500],
+    ["Deruny with sour cream", 15500],
+    ["Eggplant rolls", 17000],
+    ["Mushroom julienne", 19500],
+    ["Cheese plate with honey", 24000],
+    ["Pickle assortment", 12000],
+    ["Chicken liver pate", 17500],
+  ],
+  Soups: [
+    ["Red borscht with pampushky", 17500],
+    ["Green borscht", 15500],
+    ["Solyanka", 19000],
+    ["Kulish", 16000],
+    ["Chicken broth with noodles", 14000],
+    ["Kapusniak", 15000],
+    ["Okroshka with kefir", 14500],
+    ["Mushroom cream soup", 16500],
+  ],
+  Mains: [
+    ["Chicken Kyiv", 28500],
+    ["Holubtsi with meat", 24000],
+    ["Pork knuckle with sauerkraut", 38000],
+    ["Beef stroganoff", 32000],
+    ["Baked trout", 35500],
+    ["Kotleta po-kyivsky", 27500],
+    ["Stuffed peppers", 23000],
+    ["Duck with apples", 39500],
+  ],
+  Dumplings: [
+    ["Varenyky with potato", 15000],
+    ["Varenyky with cherry", 15500],
+    ["Varenyky with cottage cheese", 14500],
+    ["Pelmeni with beef", 19500],
+    ["Halushky with bryndza", 18000],
+    ["Nalysnyky with meat", 17000],
+    ["Syrnyky with jam", 16000],
+    ["Kholodets", 15500],
+  ],
+  Desserts: [
+    ["Kyiv cake", 17500],
+    ["Medovyk honey cake", 15500],
+    ["Apple strudel", 14500],
+    ["Poppy seed roll", 12500],
+    ["Kruchenyky", 13500],
+    ["Cottage cheese casserole", 13000],
+    ["Uzvar compote", 6500],
+    ["Coffee with chicory", 8500],
+  ],
+} as const;
+
+export const menuSeeds = Object.entries(dishesByCategory).flatMap(([category, dishes]) =>
+  dishes.map(([name, priceKopecks]) => ({ name, category, priceKopecks })),
+);

@@ -16,5 +16,9 @@
     "db:generate": "pnpm -r --if-present db:generate",
     "db:migrate": "pnpm -r --if-present db:migrate",
     "db:seed": "pnpm -r --if-present db:seed"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "6.0.3"
   }
 }

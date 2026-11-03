@@ -3,6 +3,7 @@ import type { DocumentNode } from "graphql";
 import type { QueryConfig } from "@miseboard/config";
 import type { EvaluationResult } from "@miseboard/engine";
 import { debounce } from "./debounce";
+import { ORDER_POLL_INTERVAL_MS, ORDER_UPDATED, selectsOrders } from "./live-orders";
 import type { RuntimeStore } from "./runtime-store";
 
 export const VARIABLE_DEBOUNCE_MS = 250;
@@ -16,6 +17,8 @@ export interface WatchedQueryResult {
 export interface WatchedQuery {
   subscribe: (onResult: (result: WatchedQueryResult) => void) => { unsubscribe: () => void };
   refetch: (variables?: Record<string, unknown>) => Promise<unknown>;
+  subscribeToMore: (options: { document: DocumentNode; onError: () => void }) => () => void;
+  startPolling: (intervalMs: number) => void;
 }
 
 export interface RunResult {
@@ -92,6 +95,7 @@ function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStor
   let query = initial;
   let watched: WatchedQuery | undefined;
   let subscription: { unsubscribe: () => void } | undefined;
+  let stopLiveUpdates: (() => void) | undefined;
   let watchedDocument = "";
   let lastVariables = "";
 
@@ -100,6 +104,8 @@ function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStor
   };
 
   const stopWatching = () => {
+    stopLiveUpdates?.();
+    stopLiveUpdates = undefined;
     subscription?.unsubscribe();
     watched = undefined;
   };
@@ -108,14 +114,21 @@ function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStor
     stopWatching();
     watchedDocument = query.document;
     lastVariables = JSON.stringify(variables);
-    watched = client.watchQuery({ query: document, variables });
-    subscription = watched.subscribe((result) => {
+    const current = client.watchQuery({ query: document, variables });
+    watched = current;
+    subscription = current.subscribe((result) => {
       store.getState().setQueryState(query.id, {
         data: result.data,
         isLoading: result.loading,
         error: result.error?.message ?? null,
       });
     });
+    if (selectsOrders(document)) {
+      stopLiveUpdates = current.subscribeToMore({
+        document: ORDER_UPDATED,
+        onError: () => current.startPolling(ORDER_POLL_INTERVAL_MS),
+      });
+    }
   };
 
   const refetch = (variables?: Record<string, unknown>) => {

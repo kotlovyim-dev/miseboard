@@ -2,7 +2,7 @@ import type { AddressInfo } from "node:net";
 import { createClient } from "graphql-ws";
 import { WebSocket } from "ws";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
+import { TEST_COOKIE, createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
 import { createHttpServer } from "./server";
 
 const { db, pool } = createTestDatabase();
@@ -116,7 +116,7 @@ describe("updateMenuItem", () => {
 
 describe("orderUpdated subscription", () => {
   it("delivers an updated order over the websocket, filtered by venue", async () => {
-    const server = createHttpServer(db);
+    const server = createHttpServer(db, TEST_COOKIE);
     await new Promise<void>((resolve) => server.listen(0, resolve));
     const { port } = server.address() as AddressInfo;
     const client = createClient({

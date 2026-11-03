@@ -1,9 +1,10 @@
 import { createDatabase } from "@miseboard/db";
 import { describe, expect, it } from "vitest";
+import { TEST_COOKIE } from "./fixtures";
 import { createGraphqlServer } from "./server";
 
 const { db } = createDatabase("postgres://unused@localhost:5432/unused");
-const yoga = createGraphqlServer(db);
+const yoga = createGraphqlServer(db, TEST_COOKIE);
 
 function postQuery(query: string) {
   return yoga.fetch("http://localhost/graphql", {

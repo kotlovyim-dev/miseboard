@@ -1,9 +1,5 @@
 "use client";
 
-import { useMutation } from "@apollo/client/react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import type { Role } from "@miseboard/schema";
 import {
   Select,
   SelectContent,
@@ -11,33 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SetRoleMutation } from "@/lib/role/role-documents";
 import { useRole } from "@/lib/role/use-role";
-
-const ROLES: { role: Role; label: string }[] = [
-  { role: "ADMIN", label: "Admin" },
-  { role: "MANAGER", label: "Manager" },
-  { role: "VIEWER", label: "Viewer" },
-];
+import { ROLES, useSwitchRole } from "@/lib/role/use-switch-role";
 
 export function RoleSwitcher() {
   const { role } = useRole();
-  const router = useRouter();
-  const [setRole, { loading }] = useMutation(SetRoleMutation);
+  const { switchRole, isSwitching } = useSwitchRole();
 
-  const handleChange = async (next: string) => {
+  const handleChange = (next: string) => {
     const choice = ROLES.find((candidate) => candidate.role === next);
-    if (!choice) return;
-    try {
-      await setRole({ variables: { role: choice.role } });
-      router.refresh();
-    } catch {
-      toast.error("Couldn't switch the role. Try again.");
-    }
+    if (choice) switchRole(choice.role);
   };
 
   return (
-    <Select value={role} onValueChange={handleChange} disabled={loading}>
+    <Select value={role} onValueChange={handleChange} disabled={isSwitching}>
       <SelectTrigger size="sm" aria-label="Role" className="min-w-28">
         <SelectValue />
       </SelectTrigger>

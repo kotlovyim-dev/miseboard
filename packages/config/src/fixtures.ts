@@ -16,6 +16,18 @@ export const statWidget = {
   props: { label: "Revenue", value: "{{ revenueQuery.data }}", format: "uah" },
 };
 
+export const chartWidget = {
+  id: "revenueChart",
+  type: "chart",
+  width: 6,
+  props: {
+    data: "{{ revenueQuery.data.venues[0].revenue }}",
+    xKey: "day",
+    yKey: "total",
+    format: "uah",
+  },
+};
+
 export const textWidget = {
   id: "header",
   type: "text",
@@ -66,5 +78,5 @@ export const markReadyMutation = {
 export const fullConfig = {
   version: 1,
   queries: [ordersQuery, markReadyMutation],
-  widgets: [textWidget, selectWidget, statWidget, tableWidget, formWidget],
+  widgets: [textWidget, selectWidget, statWidget, chartWidget, tableWidget, formWidget],
 };

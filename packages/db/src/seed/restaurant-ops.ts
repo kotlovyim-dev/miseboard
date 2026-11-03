@@ -74,6 +74,12 @@ const parsed = parseAppConfig({
       document: REVENUE_DOCUMENT,
       variables: { from: "{{ today() }}", to: "{{ daysAgo(-1) }}" },
     },
+    {
+      id: "revenueWeekQuery",
+      kind: "query",
+      document: REVENUE_DOCUMENT,
+      variables: { from: "{{ daysAgo(6) }}", to: "{{ daysAgo(-1) }}" },
+    },
     { id: "ordersQuery", kind: "query", document: ORDERS_DOCUMENT, variables: venueVariables },
     { id: "lowStockQuery", kind: "query", document: LOW_STOCK_DOCUMENT },
     { id: "markReady", kind: "mutation", document: MARK_READY_DOCUMENT, trigger: "manual" },
@@ -125,6 +131,17 @@ const parsed = parseAppConfig({
         label: "Low stock items",
         value: `{{ len(${lowStockItems}) }}`,
         format: "number",
+      },
+    },
+    {
+      id: "revenueChart",
+      type: "chart",
+      width: 12,
+      props: {
+        data: `{{ ${selectedVenue("revenueWeekQuery")}.revenue ?? [] }}`,
+        xKey: "day",
+        yKey: "total",
+        format: "uah",
       },
     },
     {

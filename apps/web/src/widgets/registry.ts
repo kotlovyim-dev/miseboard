@@ -1,4 +1,5 @@
 import type { WidgetType } from "@miseboard/config";
+import { chartDefinition } from "./chart/definition";
 import { formDefinition } from "./form/definition";
 import { selectDefinition } from "./select/definition";
 import { statDefinition } from "./stat/definition";
@@ -9,6 +10,7 @@ import type { WidgetDefinition } from "./types";
 export type WidgetRegistry = Partial<Record<WidgetType, WidgetDefinition>>;
 
 export const widgetRegistry: WidgetRegistry = {
+  chart: chartDefinition,
   form: formDefinition,
   select: selectDefinition,
   stat: statDefinition,

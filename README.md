@@ -1,10 +1,53 @@
-# MiseBoard
+<div align="center">
 
-A small low-code builder for restaurant internal tools: compose a screen from widgets, write GraphQL queries and bind them to the widgets with `{{ }}` expressions.
+# Mise
 
-![MiseBoard demo](docs/demo.gif)
+**Kitchen tools built before service.**
 
-Live demo: <https://LIVE-DEMO-URL> (placeholder until the deployment is up)
+A low-code builder for restaurant internal tools: drop widgets on a grid, write GraphQL queries against live orders, stock and revenue, and bind them together with `{{ }}` expressions.
+
+[![CI](https://github.com/kotlovyim-dev/miseboard/actions/workflows/ci.yml/badge.svg)](https://github.com/kotlovyim-dev/miseboard/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-0d2a1c.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/live%20demo-mise.kaymos.site-f6e016.svg)](https://mise.kaymos.site)
+
+[**Open the live demo**](https://mise.kaymos.site) · [Architecture](#architecture) · [Decisions](docs/adr) · [Run it locally](#local-setup)
+
+![Switching venues, marking an order ready and undoing it, then opening the editor to inspect a binding and run a query](docs/demo.gif)
+
+</div>
+
+## What it does
+
+### Run an app on live data
+
+![The Restaurant Ops app: venue picker, revenue, order and low-stock stats, a seven-day revenue chart and the orders table](docs/screenshots/runtime.png)
+
+An app is a 12-column grid of widgets: Table, Stat, Chart, Text, Select and Form. Picking a venue re-runs only the queries that depend on it, and the stats, chart and orders table follow. Row actions run mutations with an optimistic update and a 5-second Undo toast. Queries that read orders stay live through the `orderUpdated` subscription and fall back to polling every 5 seconds.
+
+### Build it in the editor
+
+![The editor with the revenueStat widget selected: its value binding and references in the inspector, and ordersQuery run in the query panel](docs/screenshots/editor.png)
+
+- **Palette, canvas, inspector.** Drag widgets onto the grid, reorder them, set widths of 3, 4, 6 or 12 columns.
+- **Bindings.** Any property can be a `{{ }}` expression. The inspector shows the evaluated value under the field and the widgets and queries it references; referenced widgets are marked on the canvas.
+- **Queries and mutations.** A CodeMirror editor validates GraphQL against the live schema, runs it and shows the result as a JSON tree with timing. Variables can be expressions too, and an optional transformer reshapes the result in a worker with a 1-second timeout.
+- **Forms from mutations.** A Form widget derives its fields from the chosen mutation's variables.
+- **Autosave with conflict detection.** Edits save 800 ms after the last change; a stale save offers Reload or Overwrite.
+- **Edit and Preview** switch in place, so the app can be tried without leaving the editor.
+
+### Work from the keyboard, in either theme
+
+| Command palette (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>K</kbd>)                                     | Dark mode                                                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ![Command palette listing widgets to add and queries to open](docs/screenshots/command-palette.png) | ![The editor in the dark theme with highlighter accents](docs/screenshots/editor-dark.png) |
+
+Undo and redo (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Z</kbd>, <kbd>Shift</kbd> + <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Z</kbd>), duplicate (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>D</kbd>) and a shortcut help dialog cover the rest. The theme follows the system until it is toggled.
+
+### Start from the landing page
+
+![Landing page: "Kitchen tools built before service" on a highlighter-yellow field with live orders in the headline](docs/screenshots/landing.png)
+
+The landing page puts the real demo data in its headline, and its showcase input evaluates a `{{ }}` expression with the same engine the apps use, as you type. It renders from a static snapshot when the API is down.
 
 ## Try it
 
@@ -84,29 +127,29 @@ Smaller choices:
 
 - The role switcher is not security. The cookie is signed, but any visitor can pick Admin.
 - The API must run as a single instance: PubSub is in memory, so `orderUpdated` events are not shared between processes. Several instances need a shared broker, for example Postgres `LISTEN/NOTIFY` or Redis.
-- The `orderUpdated` subscription is served over WebSocket, but the web client does not subscribe to it yet, so other open tabs do not update live. Data refreshes when a query re-runs.
 - Order pagination is forward-only (`first` and `after`); `hasPreviousPage` is always `false`. Backward paging needs `last` and `before`.
 - Tables page in the browser over the rows the bound query returned. Large datasets need a query that pages on the server.
-- Editor-level undo and redo, a command palette and a dark-mode toggle are not implemented. The Undo toast only reverses a mutation run from a widget.
 - Expressions are limited to 10,000 evaluation steps and arrays to 10,000 items.
 - Introspection is on so the editor can validate queries, which also exposes the schema to every visitor.
 - The API re-applies the template config on every boot, so manual edits to the template row are overwritten.
-- There is no end-to-end browser test suite.
+- The end-to-end suite is a single smoke test; most coverage lives in the Vitest suites.
 
 ## Operations
 
 - The API runs Drizzle migrations at startup and seeds when the `venues` table is empty, so a fresh deployment needs no manual steps.
 - `GET /healthz` returns 200 when the API can reach the database and 503 otherwise.
-- The demo data can be reset with the Admin-only `resetDemo` mutation. It re-runs the seed so order dates are relative to the reset time, keeps the template and deletes user apps older than 7 days. A nightly backup and reset job and an Admin "Reset demo" button are added by a separate change.
+- The demo data can be reset with the Admin-only `resetDemo` mutation. It re-runs the seed so order dates are relative to the reset time, keeps the template and deletes user apps older than 7 days. Admins can run it from the "Reset demo" button on `/apps`, and a cron job runs it every night at 02:30.
+- The live demo runs on [Kayly](https://github.com/kotlovyim-dev/kayly) from `kayly.toml`: one image with the proxy, web, api and reset services and a managed PostgreSQL. A push to `main` deploys.
 
 ## Testing
 
-Vitest in every package. CI (`.github/workflows/ci.yml`) runs on each push and pull request: install, lint, typecheck, tests against a PostgreSQL 17 service container, and a check that the generated GraphQL files are up to date.
+Vitest in every package. CI (`.github/workflows/ci.yml`) runs on each push and pull request: install, lint, typecheck, tests against a PostgreSQL 17 service container, and a check that the generated GraphQL files are up to date. A separate job runs the Playwright smoke test against the API and web dev servers.
 
 - `packages/engine`: parsing and rejection of forbidden constructs, type preservation for single-block templates, dependency extraction, cycles, diamond dependencies, downstream-only re-evaluation, step and array limits, blocked `__proto__` access. A benchmark test asserts that one update across forty widgets takes under 16 ms.
 - `packages/config`, `packages/db`: config validation, seed and reset against a real database.
 - `apps/api`: resolvers and RBAC against a real database, including the SQL query count for a page of orders.
-- `apps/web`: runtime, query runner, mutation planning and autosave logic.
+- `apps/web`: runtime, query runner, transformer worker, mutation planning and autosave logic.
+- `e2e`: Playwright opens the Restaurant Ops app, marks an order ready and expects the Undo toast.
 
 ## Local setup
 
@@ -128,6 +171,7 @@ pnpm dev
 | `pnpm dev`                                            | API and web in watch mode                          |
 | `pnpm codegen`                                        | Prints the SDL and regenerates the typed documents |
 | `pnpm check`                                          | Lint, typecheck, tests and the codegen check       |
+| `pnpm e2e`                                            | Playwright smoke test                              |
 | `pnpm db:generate`, `pnpm db:migrate`, `pnpm db:seed` | Drizzle migrations and seed                        |
 
 Production uses `docker-compose.yml`, which requires `SITE_ADDRESS`, `POSTGRES_PASSWORD` and `COOKIE_SECRET` in the environment. Secrets stay out of the repository.

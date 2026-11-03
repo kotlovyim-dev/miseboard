@@ -5,11 +5,13 @@ import { FormWidget } from "./form-widget";
 
 type FormProps = Extract<WidgetConfig, { type: "form" }>["props"];
 
+type FormField = FormProps["fields"][number];
+
 export const formDefinition: WidgetDefinition<FormProps> = {
   type: "form",
   label: "Form",
   defaultProps: () => ({ fields: [], submitLabel: "Submit", mutation: "", variables: {} }),
-  templatedFields: () => ({}),
+  templatedFields: ({ fields }) => Object.fromEntries(fields.flatMap(toFieldTemplates)),
   initialState: () => ({ values: {}, isSubmitting: false }),
   inspectorFields: [
     { kind: "fields", name: "fields", label: "Fields" },
@@ -20,3 +22,10 @@ export const formDefinition: WidgetDefinition<FormProps> = {
   Component: FormWidget,
   Skeleton: FormSkeleton,
 };
+
+function toFieldTemplates({ name, default: defaultValue, options }: FormField) {
+  const templates = { default: defaultValue, options };
+  return Object.entries(templates).flatMap(([key, source]): [string, string][] =>
+    source === undefined ? [] : [[`fields.${name}.${key}`, source]],
+  );
+}

@@ -3,6 +3,7 @@
 import { Group, Panel, useDefaultLayout } from "react-resizable-panels";
 import { CanvasPanel } from "@/editor/canvas/canvas-panel";
 import { EditorDnd } from "@/editor/canvas/editor-dnd";
+import { DeleteWidgetDialog } from "@/editor/inspector/delete-widget-dialog";
 import { InspectorPanel } from "@/editor/inspector/inspector-panel";
 import { PalettePanel } from "@/editor/palette/palette-panel";
 import { useEditorStore } from "@/editor/store/editor-store";
@@ -65,6 +66,7 @@ export function EditorPanels({ role }: { role: string }) {
             <InspectorPanel />
           </Panel>
         </Group>
+        <DeleteWidgetDialog />
       </EditorDnd>
     </AppRuntimeProvider>
   );

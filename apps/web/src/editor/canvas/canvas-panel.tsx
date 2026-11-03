@@ -3,6 +3,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { PanelHeader } from "@/editor/layout/panel-header";
+import { useDeleteWidget } from "@/editor/inspector/use-delete-widget";
 import { useEditorStore } from "@/editor/store/editor-store";
 import { CANVAS_DROPPABLE_ID } from "./drop-action";
 import { EmptyCanvas } from "./empty-canvas";
@@ -12,12 +13,12 @@ export function CanvasPanel() {
   const config = useEditorStore((state) => state.config);
   const selectedId = useEditorStore((state) => state.selectedId);
   const selectNode = useEditorStore((state) => state.selectNode);
-  const removeWidget = useEditorStore((state) => state.removeWidget);
+  const deleteWidget = useDeleteWidget();
   const { setNodeRef } = useDroppable({ id: CANVAS_DROPPABLE_ID });
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Escape") selectNode(null);
-    if (event.key === "Delete" && selectedId) removeWidget(selectedId);
+    if (event.key === "Delete" && selectedId) deleteWidget(selectedId);
   };
 
   return (

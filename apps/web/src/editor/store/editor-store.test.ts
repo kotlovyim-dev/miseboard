@@ -148,11 +148,13 @@ describe("selection and ui", () => {
     store.getState().selectNode("table1");
     store.getState().setHoveredReference("ordersQuery");
     store.getState().setMode("preview");
+    store.getState().setPendingDeleteId("table1");
 
     expect(store.getState()).toMatchObject({
       selectedId: "table1",
       hoveredReference: "ordersQuery",
       mode: "preview",
+      pendingDeleteId: "table1",
     });
   });
 });

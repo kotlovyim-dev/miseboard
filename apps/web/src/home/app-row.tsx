@@ -23,7 +23,7 @@ export function AppRow({ app }: { app: AppRowData }) {
         href={`/apps/${app.slug}`}
         className="flex min-w-0 flex-1 flex-col gap-1 px-3 py-3 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:gap-3"
       >
-        <span className="truncate text-sm font-medium">{app.name}</span>
+        <span className="truncate font-display text-xl">{app.name}</span>
         <IdChip id={app.slug} className="self-start" />
         <span className="sm:ml-auto">
           <SavedAt updatedAt={app.updatedAt} />

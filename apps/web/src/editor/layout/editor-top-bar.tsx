@@ -23,7 +23,7 @@ export function EditorTopBar({ appName, saveStatus, onRetry }: EditorTopBarProps
         >
           <ArrowLeft aria-hidden className="size-4" strokeWidth={1.5} />
         </Link>
-        <h1 className="truncate font-display text-sm font-semibold">{appName}</h1>
+        <h1 className="truncate text-sm font-semibold">{appName}</h1>
       </div>
       <ModeToggle />
       <div className="flex items-center justify-end gap-3">

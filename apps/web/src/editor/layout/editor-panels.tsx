@@ -1,6 +1,7 @@
 "use client";
 
 import { Group, Panel, useDefaultLayout } from "react-resizable-panels";
+import { PalettePanel } from "@/editor/palette/palette-panel";
 import { EditorPanel } from "./editor-panel";
 import { ResizeHandle } from "./resize-handle";
 
@@ -25,7 +26,7 @@ export function EditorPanels() {
         maxSize={SIDE_PANEL_MAX_PX}
         groupResizeBehavior="preserve-pixel-size"
       >
-        <EditorPanel title="Palette" hint="Widgets you can add to the canvas." />
+        <PalettePanel />
       </Panel>
       <ResizeHandle direction="vertical" />
       <Panel id="center" minSize="30%">

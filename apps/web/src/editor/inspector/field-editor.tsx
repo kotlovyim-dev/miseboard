@@ -4,6 +4,7 @@ import { ExpressionField } from "./expression-field";
 import type { FieldEditorProps, FieldKind, FieldOfKind } from "./field-editor-props";
 import { NumberField } from "./number-field";
 import { SelectField } from "./select-field";
+import { TextField } from "./text-field";
 
 type FieldEditors = {
   [TKind in FieldKind]?: ComponentType<FieldEditorProps<FieldOfKind<TKind>>>;
@@ -14,6 +15,7 @@ const fieldEditors: FieldEditors = {
   columns: ColumnsEditor,
   number: NumberField,
   select: SelectField,
+  text: TextField,
 };
 
 export function FieldEditor(props: FieldEditorProps) {

@@ -26,10 +26,14 @@ export async function seedTestDatabase(db: Database) {
 export function createTestClient(db: Database) {
   const yoga = createGraphqlServer(db, TEST_COOKIE);
 
-  async function queryRaw(query: string, variables?: Record<string, unknown>) {
+  async function queryRaw(
+    query: string,
+    variables?: Record<string, unknown>,
+    headers: Record<string, string> = {},
+  ) {
     const response = await yoga.fetch("http://localhost/graphql", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...headers },
       body: JSON.stringify({ query, variables }),
     });
     return response.json();

@@ -17,7 +17,10 @@ function evaluateVenue(venueId: string): Evaluations {
   return new Map([["ordersQuery", { venueId: { ok: true, value: venueId } }]]);
 }
 
-function setup(queries: QueryConfig[]) {
+function setup(
+  queries: QueryConfig[],
+  transform = vi.fn(() => Promise.resolve(undefined as unknown)),
+) {
   const store = createRuntimeStore({
     role: "ADMIN",
     widgetStates: {},
@@ -40,7 +43,7 @@ function setup(queries: QueryConfig[]) {
   }));
   const query = vi.fn(() => Promise.resolve({ data: { orders: [{ id: "o9" }] } }));
   const client: QueryClient = { watchQuery, query };
-  const runner = createQueryRunner(client, store);
+  const runner = createQueryRunner(client, store, transform);
   runner.sync(queries);
   return {
     store,
@@ -180,6 +183,50 @@ describe("createQueryRunner", () => {
 
     expect(result.error).toBe("boom");
     expect(store.getState().queryStates["ordersQuery"]?.error).toBe("boom");
+  });
+
+  it("exposes the transformed result of a watched query", async () => {
+    const transform = vi.fn(() => Promise.resolve([{ id: "o1" }]));
+    const { store, emit } = setup(
+      [{ ...ordersQuery, transformer: "return data.orders" }],
+      transform,
+    );
+
+    emit({ data: { orders: [{ id: "o1" }] }, loading: false });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(transform).toHaveBeenCalledWith("return data.orders", { orders: [{ id: "o1" }] });
+    expect(store.getState().queryStates["ordersQuery"]).toEqual({
+      data: [{ id: "o1" }],
+      isLoading: false,
+      error: null,
+    });
+  });
+
+  it("reports a failing transformer as the query error", async () => {
+    const transform = vi.fn(() => Promise.reject(new Error("Transformer timed out after 1000 ms")));
+    const { store, emit } = setup([{ ...ordersQuery, transformer: "while (true) {}" }], transform);
+
+    emit({ data: { orders: [] }, loading: false });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(store.getState().queryStates["ordersQuery"]).toEqual({
+      data: undefined,
+      isLoading: false,
+      error: "Transformer timed out after 1000 ms",
+    });
+  });
+
+  it("transforms the result of a manual run and reports its failure", async () => {
+    const transform = vi.fn(() => Promise.resolve(3));
+    const { runner } = setup([{ ...ordersQuery, transformer: "return 3" }], transform);
+
+    const succeeded = await runner.run("ordersQuery");
+    transform.mockRejectedValueOnce(new Error("data is not iterable"));
+    const failed = await runner.run("ordersQuery");
+
+    expect(succeeded.data).toBe(3);
+    expect(failed.error).toBe("data is not iterable");
   });
 
   it("follows order updates and polls when the live feed fails", () => {

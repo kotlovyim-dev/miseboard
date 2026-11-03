@@ -5,6 +5,8 @@ import type { EvaluationResult } from "@miseboard/engine";
 import { debounce } from "./debounce";
 import { ORDER_POLL_INTERVAL_MS, ORDER_UPDATED, selectsOrders } from "./live-orders";
 import type { RuntimeStore } from "./runtime-store";
+import { runTransformer } from "./run-transformer";
+import type { Transform } from "./run-transformer";
 
 export const VARIABLE_DEBOUNCE_MS = 250;
 
@@ -55,7 +57,11 @@ interface QueryTask {
 
 type Variables = { ok: true; values: Record<string, unknown> } | { ok: false; error: string };
 
-export function createQueryRunner(client: QueryClient, store: RuntimeStore): QueryRunner {
+export function createQueryRunner(
+  client: QueryClient,
+  store: RuntimeStore,
+  transform: Transform = runTransformer,
+): QueryRunner {
   const tasks = new Map<string, QueryTask>();
   let known: readonly QueryConfig[] = [];
 
@@ -70,6 +76,7 @@ export function createQueryRunner(client: QueryClient, store: RuntimeStore): Que
         client,
         store,
         known.find((query) => query.id === queryId),
+        transform,
       ),
     sync: (queries) => {
       known = queries;
@@ -79,7 +86,7 @@ export function createQueryRunner(client: QueryClient, store: RuntimeStore): Que
       for (const query of onLoad) {
         const task = tasks.get(query.id);
         if (task) task.update(query);
-        else tasks.set(query.id, startTask(client, query, store));
+        else tasks.set(query.id, startTask(client, query, store, transform));
       }
     },
     retry: (queryId) => tasks.get(queryId)?.retry(),
@@ -91,12 +98,22 @@ function isOnLoadQuery(query: QueryConfig) {
   return query.kind === "query" && query.trigger === "onLoad";
 }
 
-function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStore): QueryTask {
+function sourceKey(query: QueryConfig) {
+  return JSON.stringify([query.document, query.transformer]);
+}
+
+function startTask(
+  client: QueryClient,
+  initial: QueryConfig,
+  store: RuntimeStore,
+  transform: Transform,
+): QueryTask {
   let query = initial;
   let watched: WatchedQuery | undefined;
   let subscription: { unsubscribe: () => void } | undefined;
   let stopLiveUpdates: (() => void) | undefined;
-  let watchedDocument = "";
+  let watchedSource = "";
+  let publishCount = 0;
   let lastVariables = "";
 
   const fail = (error: string) => {
@@ -110,19 +127,29 @@ function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStor
     watched = undefined;
   };
 
+  const publish = async (result: WatchedQueryResult) => {
+    const ticket = ++publishCount;
+    const status = { isLoading: result.loading, error: result.error?.message ?? null };
+    const setState = store.getState().setQueryState;
+    if (!query.transformer || result.data === undefined) {
+      return setState(query.id, { data: result.data, ...status });
+    }
+    try {
+      const data = await transform(query.transformer, result.data);
+      if (ticket === publishCount) setState(query.id, { data, ...status });
+    } catch (caught) {
+      const error = caught instanceof Error ? caught.message : String(caught);
+      if (ticket === publishCount) setState(query.id, { data: undefined, isLoading: false, error });
+    }
+  };
+
   const watch = (document: DocumentNode, variables: Record<string, unknown>) => {
     stopWatching();
-    watchedDocument = query.document;
+    watchedSource = sourceKey(query);
     lastVariables = JSON.stringify(variables);
     const current = client.watchQuery({ query: document, variables });
     watched = current;
-    subscription = current.subscribe((result) => {
-      store.getState().setQueryState(query.id, {
-        data: result.data,
-        isLoading: result.loading,
-        error: result.error?.message ?? null,
-      });
-    });
+    subscription = current.subscribe((result) => void publish(result));
     if (selectsOrders(document)) {
       stopLiveUpdates = current.subscribeToMore({
         document: ORDER_UPDATED,
@@ -149,7 +176,7 @@ function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStor
       stopWatching();
       return fail(document.error);
     }
-    if (!watched || watchedDocument !== query.document)
+    if (!watched || watchedSource !== sourceKey(query))
       return watch(document.value, variables.values);
     const serialized = JSON.stringify(variables.values);
     if (serialized === lastVariables) return;
@@ -183,6 +210,7 @@ async function runQuery(
   client: QueryClient,
   store: RuntimeStore,
   query: QueryConfig | undefined,
+  transform: Transform,
 ): Promise<RunResult> {
   if (!query) return { variables: {}, error: "Unknown query" };
   const variables = readVariables(store, query.id);
@@ -194,11 +222,14 @@ async function runQuery(
   setState(query.id, { data: previous?.data, isLoading: true, error: null });
   const startedAt = performance.now();
   try {
-    const { data } = (await client.query({
+    const response = (await client.query({
       query: document.value,
       variables: variables.values,
       fetchPolicy: "network-only",
     })) as { data?: unknown };
+    const data = query.transformer
+      ? await transform(query.transformer, response.data)
+      : response.data;
     setState(query.id, { data, isLoading: false, error: null });
     return { variables: variables.values, data, durationMs: performance.now() - startedAt };
   } catch (caught) {

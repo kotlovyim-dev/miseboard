@@ -7,7 +7,7 @@ export function ResizeHandle({ direction }: { direction: "vertical" | "horizonta
   return (
     <Separator
       className={cn(
-        "relative shrink-0 bg-border outline-none transition-colors duration-150",
+        "relative shrink-0 bg-border outline-none transition-colors duration-150 motion-reduce:transition-none",
         "hover:bg-ring focus-visible:bg-ring data-[separator=active]:bg-ring",
         size,
       )}

@@ -32,7 +32,7 @@ export function ModeToggle() {
           key={itemMode}
           value={itemMode}
           className={cn(
-            "inline-flex h-6 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors duration-150",
+            "inline-flex h-6 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors duration-150 motion-reduce:transition-none",
             "hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
             "data-[state=on]:bg-card data-[state=on]:text-foreground",
           )}

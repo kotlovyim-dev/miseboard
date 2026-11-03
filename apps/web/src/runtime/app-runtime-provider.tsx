@@ -36,6 +36,7 @@ export function AppRuntimeProvider({ config, role, children }: AppRuntimeProvide
       engine,
       config,
       retryQuery: runner.retry,
+      runQuery: runner.run,
     }),
     [store, engine, config, runner],
   );

@@ -33,10 +33,18 @@ function setup(queries: QueryConfig[]) {
     },
     refetch,
   }));
-  const client: QueryClient = { watchQuery };
+  const query = vi.fn(() => Promise.resolve({ data: { orders: [{ id: "o9" }] } }));
+  const client: QueryClient = { watchQuery, query };
   const runner = createQueryRunner(client, store);
   runner.sync(queries);
-  return { store, watchQuery, refetch, runner, emit: (result: WatchedQueryResult) => emit(result) };
+  return {
+    store,
+    watchQuery,
+    query,
+    refetch,
+    runner,
+    emit: (result: WatchedQueryResult) => emit(result),
+  };
 }
 
 describe("createQueryRunner", () => {
@@ -135,5 +143,34 @@ describe("createQueryRunner", () => {
     vi.advanceTimersByTime(250);
 
     expect(refetch).not.toHaveBeenCalled();
+  });
+
+  it("runs a manual query on demand and exposes the result to expressions", async () => {
+    const manualQuery: QueryConfig = { ...ordersQuery, id: "manualQuery", trigger: "manual" };
+    const { store, watchQuery, query, runner } = setup([manualQuery]);
+    store
+      .getState()
+      .mergeEvaluations(new Map([["manualQuery", { venueId: { ok: true, value: "v1" } }]]));
+
+    const result = await runner.run("manualQuery");
+
+    expect(watchQuery).not.toHaveBeenCalled();
+    expect(query).toHaveBeenCalledWith(expect.objectContaining({ variables: { venueId: "v1" } }));
+    expect(result.data).toEqual({ orders: [{ id: "o9" }] });
+    expect(store.getState().queryStates["manualQuery"]).toEqual({
+      data: { orders: [{ id: "o9" }] },
+      isLoading: false,
+      error: null,
+    });
+  });
+
+  it("reports a failed run as the query error", async () => {
+    const { store, query, runner } = setup([ordersQuery]);
+    query.mockRejectedValueOnce(new Error("boom"));
+
+    const result = await runner.run("ordersQuery");
+
+    expect(result.error).toBe("boom");
+    expect(store.getState().queryStates["ordersQuery"]?.error).toBe("boom");
   });
 });

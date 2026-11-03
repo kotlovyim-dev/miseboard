@@ -1,4 +1,5 @@
 import { RoleSwitcher } from "@/components/role-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { AppList } from "@/home/app-list";
 import { HomeActions } from "@/home/home-actions";
 import { getClient } from "@/lib/apollo/server-client";
@@ -13,7 +14,10 @@ export default async function HomePage() {
       <header className="border-b border-border">
         <div className="mx-auto flex h-12 max-w-4xl items-center justify-between px-4 sm:px-6">
           <span className="font-display text-base font-semibold">MiseBoard</span>
-          <RoleSwitcher />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <RoleSwitcher />
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">

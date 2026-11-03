@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { RoleSwitcher } from "@/components/role-switcher";
 import { SaveStatus } from "@/components/save-status";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { SaveStatus as Status } from "@/editor/persistence/autosave";
 import { ModeToggle } from "./mode-toggle";
 
@@ -27,6 +28,7 @@ export function EditorTopBar({ appName, saveStatus, onRetry }: EditorTopBarProps
       <ModeToggle />
       <div className="flex items-center justify-end gap-3">
         <SaveStatus status={saveStatus} onRetry={onRetry} />
+        <ThemeToggle />
         <RoleSwitcher />
       </div>
     </header>

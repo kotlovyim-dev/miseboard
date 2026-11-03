@@ -15,10 +15,13 @@ import { isNumericColumn } from "./cell-format";
 import { evaluateRows } from "./evaluate-rows";
 import { isSelectedRow } from "./is-selected-row";
 import type { EvaluatedRow } from "./evaluate-rows";
+import { RowActionButton } from "./row-action-button";
 import { TableCell } from "./table-cell";
-import { readColumns, readPageSize, readRecords } from "./table-columns";
-import type { TableColumn } from "./table-columns";
+import { readColumns, readPageSize, readRecords, readRowAction } from "./table-columns";
+import type { TableColumn, TableRowAction } from "./table-columns";
 import { TablePagination } from "./table-pagination";
+
+const ROW_ACTION_COLUMN_ID = "__rowAction";
 
 export function TableWidget({ id, props, state, setState }: WidgetComponentProps) {
   const scope = useRuntimeScope();
@@ -28,7 +31,8 @@ export function TableWidget({ id, props, state, setState }: WidgetComponentProps
     () => evaluateRows(id, columns, readRecords(id, props.data), scope),
     [id, columns, props, scope],
   );
-  const columnDefs = useMemo(() => toColumnDefs(columns), [columns]);
+  const rowAction = useMemo(() => readRowAction(props), [props]);
+  const columnDefs = useMemo(() => toColumnDefs(columns, rowAction), [columns, rowAction]);
   const pageIndex = Math.min(readPage(state) - 1, lastPageIndex(rows.length, pageSize));
   const pagination = { pageIndex, pageSize };
 
@@ -123,11 +127,23 @@ function lastPageIndex(rowCount: number, pageSize: number) {
   return Math.max(Math.ceil(rowCount / pageSize) - 1, 0);
 }
 
-function toColumnDefs(columns: TableColumn[]): ColumnDef<EvaluatedRow>[] {
-  return columns.map((column) => ({
+function toColumnDefs(
+  columns: TableColumn[],
+  rowAction: TableRowAction | null,
+): ColumnDef<EvaluatedRow>[] {
+  const defs: ColumnDef<EvaluatedRow>[] = columns.map((column) => ({
     id: column.key,
     header: column.label,
     accessorFn: (row) => row.cells[column.key],
     cell: ({ getValue }) => <TableCell columnKey={column.key} value={getValue()} />,
   }));
+  if (!rowAction) return defs;
+  return [
+    ...defs,
+    {
+      id: ROW_ACTION_COLUMN_ID,
+      header: () => <span className="sr-only">Actions</span>,
+      cell: ({ row }) => <RowActionButton action={rowAction} row={row.original.source} />,
+    },
+  ];
 }

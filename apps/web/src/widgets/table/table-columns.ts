@@ -1,3 +1,4 @@
+import { readVariableTemplates } from "@/mutations/read-variable-templates";
 import type { EvaluatedProps } from "../types";
 
 export interface TableColumn {
@@ -29,4 +30,21 @@ function isTableColumn(value: unknown): value is TableColumn {
 
 function isRecord(value: unknown): value is TableRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export interface TableRowAction {
+  label: string;
+  mutation: string;
+  variables: Record<string, string>;
+}
+
+export function readRowAction(props: EvaluatedProps): TableRowAction | null {
+  const { rowAction } = props;
+  if (!isRecord(rowAction)) return null;
+  if (typeof rowAction.label !== "string" || typeof rowAction.mutation !== "string") return null;
+  return {
+    label: rowAction.label,
+    mutation: rowAction.mutation,
+    variables: readVariableTemplates(rowAction.variables),
+  };
 }

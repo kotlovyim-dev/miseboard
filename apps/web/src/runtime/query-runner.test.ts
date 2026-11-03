@@ -3,7 +3,7 @@ import type { QueryConfig } from "@miseboard/config";
 import type { Evaluations } from "@miseboard/engine";
 import { createRuntimeStore } from "./runtime-store";
 import { createQueryRunner } from "./query-runner";
-import type { QueryClient, WatchedQueryResult } from "./query-runner";
+import type { QueryClient, WatchedQuery, WatchedQueryResult } from "./query-runner";
 
 const ordersQuery: QueryConfig = {
   id: "ordersQuery",
@@ -26,12 +26,17 @@ function setup(queries: QueryConfig[]) {
   store.getState().mergeEvaluations(evaluateVenue("v1"));
   const refetch = vi.fn(() => Promise.resolve());
   let emit: (result: WatchedQueryResult) => void = () => undefined;
+  const stopLive = vi.fn();
+  const subscribeToMore = vi.fn<WatchedQuery["subscribeToMore"]>(() => stopLive);
+  const startPolling = vi.fn();
   const watchQuery = vi.fn(() => ({
     subscribe: (onResult: (result: WatchedQueryResult) => void) => {
       emit = onResult;
       return { unsubscribe: () => undefined };
     },
     refetch,
+    subscribeToMore,
+    startPolling,
   }));
   const query = vi.fn(() => Promise.resolve({ data: { orders: [{ id: "o9" }] } }));
   const client: QueryClient = { watchQuery, query };
@@ -42,6 +47,9 @@ function setup(queries: QueryConfig[]) {
     watchQuery,
     query,
     refetch,
+    subscribeToMore,
+    startPolling,
+    stopLive,
     runner,
     emit: (result: WatchedQueryResult) => emit(result),
   };
@@ -172,5 +180,28 @@ describe("createQueryRunner", () => {
 
     expect(result.error).toBe("boom");
     expect(store.getState().queryStates["ordersQuery"]?.error).toBe("boom");
+  });
+
+  it("follows order updates and polls when the live feed fails", () => {
+    const { subscribeToMore, startPolling } = setup([ordersQuery]);
+
+    expect(subscribeToMore).toHaveBeenCalledOnce();
+    subscribeToMore.mock.calls[0]?.[0].onError();
+
+    expect(startPolling).toHaveBeenCalledWith(5000);
+  });
+
+  it("does not follow queries that do not select orders", () => {
+    const { subscribeToMore } = setup([{ ...ordersQuery, document: "query { venues { id } }" }]);
+
+    expect(subscribeToMore).not.toHaveBeenCalled();
+  });
+
+  it("stops the live feed with the query", () => {
+    const { stopLive, runner } = setup([ordersQuery]);
+
+    runner.stop();
+
+    expect(stopLive).toHaveBeenCalledOnce();
   });
 });

@@ -23,6 +23,7 @@ type Documents = {
     "\n  mutation ResetDemo {\n    resetDemo\n  }\n": typeof types.ResetDemoDocument,
     "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": typeof types.ViewerDocument,
     "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": typeof types.SetRoleDocument,
+    "\n  subscription OrderUpdated {\n    orderUpdated {\n      id\n      status\n      total\n      createdAt\n    }\n  }\n": typeof types.OrderUpdatedDocument,
 };
 const documents: Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
@@ -34,6 +35,7 @@ const documents: Documents = {
     "\n  mutation ResetDemo {\n    resetDemo\n  }\n": types.ResetDemoDocument,
     "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": types.ViewerDocument,
     "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": types.SetRoleDocument,
+    "\n  subscription OrderUpdated {\n    orderUpdated {\n      id\n      status\n      total\n      createdAt\n    }\n  }\n": types.OrderUpdatedDocument,
 };
 
 /**
@@ -86,6 +88,10 @@ export function graphql(source: "\n  query Viewer {\n    viewer {\n      role\n 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n"): (typeof documents)["\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription OrderUpdated {\n    orderUpdated {\n      id\n      status\n      total\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  subscription OrderUpdated {\n    orderUpdated {\n      id\n      status\n      total\n      createdAt\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

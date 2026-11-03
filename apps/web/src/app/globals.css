@@ -21,6 +21,8 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-ring: var(--ring);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
   --color-highlighter: var(--highlighter);
   --color-highlighter-foreground: var(--highlighter-foreground);
   --color-destructive: var(--destructive);
@@ -32,6 +34,9 @@
   --radius-lg: var(--radius);
   --font-sans: var(--font-archivo), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --text-statement: clamp(22px, 2.2vw, 32px);
+  --text-heading: clamp(32px, 3.6vw, 56px);
+  --text-display: clamp(44px, 6.4vw, 104px);
 }
 
 :root {
@@ -53,6 +58,8 @@
   --secondary: oklch(0.94 0.006 160);
   --secondary-foreground: var(--foreground);
   --ring: #0d2a1c;
+  --paper: #f7f7f5;
+  --ink: #0d2a1c;
   --highlighter: #f6e016;
   --highlighter-foreground: #0d2a1c;
   --destructive: oklch(0.53 0.19 27);

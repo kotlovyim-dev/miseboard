@@ -15,6 +15,7 @@ const REORDER_TRANSITION = { duration: 200, easing: "cubic-bezier(0.2, 0.8, 0.2,
 
 export function SortableWidget({ widget }: { widget: WidgetConfig }) {
   const isSelected = useEditorStore((state) => state.selectedId === widget.id);
+  const isReferenced = useEditorStore((state) => state.hoveredReference === widget.id);
   const selectNode = useEditorStore((state) => state.selectNode);
   const shouldReduceMotion = useReducedMotion();
   const {
@@ -47,6 +48,7 @@ export function SortableWidget({ widget }: { widget: WidgetConfig }) {
         "group relative min-w-0 rounded-lg",
         COLUMN_SPAN[widget.width],
         isSelected && "ring-2 ring-ring ring-offset-2 ring-offset-surface",
+        isReferenced && !isSelected && "ring-2 ring-primary/60 ring-offset-2 ring-offset-surface",
         isDragging && "opacity-40",
       )}
     >
@@ -68,7 +70,7 @@ export function SortableWidget({ widget }: { widget: WidgetConfig }) {
         id={widget.id}
         className={cn(
           "absolute -top-2.5 left-2 hidden bg-card group-hover:inline-flex",
-          isSelected && "inline-flex",
+          (isSelected || isReferenced) && "inline-flex",
         )}
       />
     </div>

@@ -3,6 +3,7 @@ import { AppConfig, EMPTY_APP_CONFIG, type WidgetType } from "@miseboard/config"
 import { demoApp } from "@/runtime/demo-app";
 import { useEditorStore } from "./editor-store";
 import { nextId } from "./next-id";
+import { validateNodeId } from "./validate-node-id";
 
 const store = useEditorStore;
 const widgetIds = () => store.getState().config.widgets.map((widget) => widget.id);
@@ -105,6 +106,27 @@ describe("renameNode", () => {
   });
 });
 
+describe("validateNodeId", () => {
+  const config = AppConfig.parse({
+    version: 1,
+    queries: [{ id: "ordersQuery", kind: "query", document: "" }],
+    widgets: [{ id: "intro", type: "text", width: 4, props: { content: "" } }],
+  });
+
+  it("accepts a free id and the current id", () => {
+    expect(validateNodeId(config, "intro", "summary")).toBeNull();
+    expect(validateNodeId(config, "intro", "intro")).toBeNull();
+  });
+
+  it("rejects a malformed id", () => {
+    expect(validateNodeId(config, "intro", "Bad-id")).toMatch(/lowercase letter/);
+  });
+
+  it("names an id that another node uses", () => {
+    expect(validateNodeId(config, "intro", "ordersQuery")).toBe("ordersQuery is already used.");
+  });
+});
+
 describe("query actions", () => {
   it("adds, updates and removes a query", () => {
     store.getState().addQuery();
@@ -126,11 +148,13 @@ describe("selection and ui", () => {
     store.getState().selectNode("table1");
     store.getState().setHoveredReference("ordersQuery");
     store.getState().setMode("preview");
+    store.getState().setPendingDeleteId("table1");
 
     expect(store.getState()).toMatchObject({
       selectedId: "table1",
       hoveredReference: "ordersQuery",
       mode: "preview",
+      pendingDeleteId: "table1",
     });
   });
 });

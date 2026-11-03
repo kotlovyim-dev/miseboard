@@ -34,6 +34,7 @@ export function AppRuntimeProvider({ config, role, children }: AppRuntimeProvide
   const value = useMemo(
     () => ({
       store: runtime.store,
+      engine: runtime.engine,
       config,
       retryQuery: (queryId: string) => runnerRef.current?.retry(queryId),
     }),

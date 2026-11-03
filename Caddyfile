@@ -1,3 +1,9 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
@@ -8,18 +14,24 @@
 		-Server
 	}
 
+	@foreign not host {$ALLOWED_HOST:localhost}
+
+	handle /healthz {
+		reverse_proxy api:4000
+	}
+
+	handle @foreign {
+		respond 421
+	}
+
 	handle /graphql {
 		rate_limit {
 			zone graphql {
-				key {http.request.remote.host}
+				key {http.request.client_ip}
 				window 1s
 				events 30
 			}
 		}
-		reverse_proxy api:4000
-	}
-
-	handle /healthz {
 		reverse_proxy api:4000
 	}
 

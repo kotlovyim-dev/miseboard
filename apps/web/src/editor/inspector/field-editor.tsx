@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { ColumnsEditor } from "./columns-editor";
 import { ExpressionField } from "./expression-field";
 import type { FieldEditorProps, FieldKind, FieldOfKind } from "./field-editor-props";
 import { NumberField } from "./number-field";
@@ -10,6 +11,7 @@ type FieldEditors = {
 
 const fieldEditors: FieldEditors = {
   template: ExpressionField,
+  columns: ColumnsEditor,
   number: NumberField,
   select: SelectField,
 };

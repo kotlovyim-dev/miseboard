@@ -14,3 +14,4 @@ export type { Dependency, DependencyOptions } from "./dependencies";
 export { createEngine } from "./engine";
 export type { Engine, EngineOptions, Evaluations, NodeEvaluation } from "./engine";
 export type { EngineNode } from "./graph";
+export { startOfKyivDay } from "./kyiv-day";

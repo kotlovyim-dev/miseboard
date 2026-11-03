@@ -5,6 +5,7 @@ import ScopeAuthPlugin from "@pothos/plugin-scope-auth";
 import ZodPlugin from "@pothos/plugin-zod";
 import { DateTimeResolver, JSONResolver } from "graphql-scalars";
 import type { Context } from "../context";
+import { badInput } from "../errors";
 
 export const builder = new SchemaBuilder<{
   Context: Context;
@@ -18,6 +19,7 @@ export const builder = new SchemaBuilder<{
   plugins: [ScopeAuthPlugin, RelayPlugin, DataloaderPlugin, ZodPlugin],
   defaultFieldNullability: false,
   relay: {},
+  zod: { validationError: (error) => badInput(error.message) },
   scopeAuth: {
     authScopes: (context) => ({
       admin: context.role === "ADMIN",

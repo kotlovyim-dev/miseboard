@@ -16,6 +16,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
 type Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": typeof types.OrderStatusValueFragmentDoc,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": typeof types.AppsDocument,
+    "\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": typeof types.AppDocument,
     "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": typeof types.CreateAppDocument,
     "\n  mutation SaveApp($id: ID!, $config: JSON!, $expectedUpdatedAt: DateTime!) {\n    saveApp(id: $id, config: $config, expectedUpdatedAt: $expectedUpdatedAt) {\n      __typename\n      ... on App {\n        id\n        updatedAt\n      }\n      ... on VersionConflict {\n        message\n        latest {\n          id\n          name\n          config\n          updatedAt\n        }\n      }\n    }\n  }\n": typeof types.SaveAppDocument,
     "\n  mutation DeleteApp($id: ID!) {\n    deleteApp(id: $id)\n  }\n": typeof types.DeleteAppDocument,
@@ -25,6 +26,7 @@ type Documents = {
 const documents: Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": types.AppsDocument,
+    "\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": types.AppDocument,
     "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": types.CreateAppDocument,
     "\n  mutation SaveApp($id: ID!, $config: JSON!, $expectedUpdatedAt: DateTime!) {\n    saveApp(id: $id, config: $config, expectedUpdatedAt: $expectedUpdatedAt) {\n      __typename\n      ... on App {\n        id\n        updatedAt\n      }\n      ... on VersionConflict {\n        message\n        latest {\n          id\n          name\n          config\n          updatedAt\n        }\n      }\n    }\n  }\n": types.SaveAppDocument,
     "\n  mutation DeleteApp($id: ID!) {\n    deleteApp(id: $id)\n  }\n": types.DeleteAppDocument,
@@ -54,6 +56,10 @@ export function graphql(source: "\n  fragment OrderStatusValue on Order {\n    s
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

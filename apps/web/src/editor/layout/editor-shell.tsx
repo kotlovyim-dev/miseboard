@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { AppConfigData } from "@miseboard/config";
 import { useEditorStore } from "@/editor/store/editor-store";
+import type { LoadedApp } from "@/lib/apps/load-app";
 import { useRole } from "@/lib/role/use-role";
 import { DesktopNotice } from "./desktop-notice";
 import { EditorTopBar } from "./editor-top-bar";
@@ -18,13 +18,8 @@ const EditorPanels = dynamic(
 
 const EDIT_DENIED_TOAST_ID = "edit-denied";
 
-interface EditorShellProps {
-  slug: string;
-  appName: string;
-  config: AppConfigData;
-}
-
-export function EditorShell({ slug, appName, config }: EditorShellProps) {
+export function EditorShell({ app }: { app: LoadedApp }) {
+  const { slug, name, config } = app;
   const router = useRouter();
   const { canEdit } = useRole();
   const mode = useEditorStore((state) => state.mode);
@@ -42,7 +37,7 @@ export function EditorShell({ slug, appName, config }: EditorShellProps) {
 
   return (
     <div className="flex h-dvh flex-col">
-      <EditorTopBar appName={appName} />
+      <EditorTopBar appName={name} />
       {mode === "edit" && <DesktopNotice />}
       <div className="min-h-0 flex-1">{mode === "edit" ? <EditorPanels /> : <PreviewPane />}</div>
     </div>

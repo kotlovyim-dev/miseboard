@@ -13,6 +13,18 @@ export const AppsQuery = graphql(`
   }
 `);
 
+export const AppQuery = graphql(`
+  query App($slug: String!) {
+    app(slug: $slug) {
+      id
+      name
+      slug
+      config
+      updatedAt
+    }
+  }
+`);
+
 export const CreateAppMutation = graphql(`
   mutation CreateApp($name: String!, $fromTemplate: Boolean) {
     createApp(name: $name, fromTemplate: $fromTemplate) {

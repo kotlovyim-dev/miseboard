@@ -78,6 +78,22 @@ export function CommandPalette({ isOpen, onOpenChange }: CommandPaletteProps) {
             ))}
           </Command.Group>
         )}
+        {mode === "edit" && (
+          <Command.Group heading="History" className={GROUP_CLASS}>
+            <Command.Item
+              onSelect={run(() => useEditorStore.temporal.getState().undo())}
+              className={ITEM_CLASS}
+            >
+              Undo
+            </Command.Item>
+            <Command.Item
+              onSelect={run(() => useEditorStore.temporal.getState().redo())}
+              className={ITEM_CLASS}
+            >
+              Redo
+            </Command.Item>
+          </Command.Group>
+        )}
         <Command.Group heading="View" className={GROUP_CLASS}>
           <Command.Item
             onSelect={run(() => setMode(mode === "edit" ? "preview" : "edit"))}

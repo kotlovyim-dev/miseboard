@@ -13,6 +13,8 @@ export function EditorShortcuts() {
   useEditorShortcuts({
     togglePalette: () => setIsPaletteOpen((isOpen) => !isOpen),
     showHelp: () => setIsHelpOpen(true),
+    undo: () => useEditorStore.temporal.getState().undo(),
+    redo: () => useEditorStore.temporal.getState().redo(),
     duplicate: () => {
       const { mode, selectedId, duplicateWidget } = useEditorStore.getState();
       if (mode === "edit" && selectedId) duplicateWidget(selectedId);

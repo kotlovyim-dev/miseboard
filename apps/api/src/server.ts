@@ -9,6 +9,7 @@ import type { Database } from "@miseboard/db";
 import { createContext } from "./context";
 import { useExecutionTimeout } from "./execution-timeout";
 import { schema } from "./schema";
+import { serveSubscriptions } from "./websocket";
 
 const MAX_DEPTH = 6;
 const MAX_TOKENS = 1000;
@@ -30,10 +31,12 @@ export function createGraphqlServer(db: Database) {
 
 export function createHttpServer(db: Database) {
   const yoga = createGraphqlServer(db);
-  return createServer((request, response) => {
+  const server = createServer((request, response) => {
     if (request.url === "/healthz") return respondHealth(db, response);
     return yoga(request, response);
   });
+  serveSubscriptions(server, yoga);
+  return server;
 }
 
 async function respondHealth(db: Database, response: ServerResponse) {

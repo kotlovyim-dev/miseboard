@@ -4,12 +4,11 @@ import { useApolloClient } from "@apollo/client/react";
 import { toast } from "sonner";
 import { useRole } from "@/lib/role/use-role";
 import { useRuntime, useRuntimeScope } from "@/runtime/runtime-context";
+import { VIEWER_MUTATION_REASON } from "./viewer-mutation-reason";
 import type { InverseCall } from "./inverse-registry";
 import { runInverseMutation, runWidgetMutation } from "./run-widget-mutation";
 import type { MutationOutcome, WidgetMutation } from "./run-widget-mutation";
 import { showErrorToast, showUndoToast } from "./undo-toast";
-
-export const VIEWER_MUTATION_REASON = "Viewers can't change data. Switch to Manager or Admin.";
 
 export function useWidgetMutation() {
   const client = useApolloClient();

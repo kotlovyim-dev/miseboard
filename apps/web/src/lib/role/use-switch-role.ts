@@ -6,12 +6,6 @@ import { toast } from "sonner";
 import type { Role } from "@miseboard/schema";
 import { SetRoleMutation } from "./role-documents";
 
-export const ROLES: { role: Role; label: string }[] = [
-  { role: "ADMIN", label: "Admin" },
-  { role: "MANAGER", label: "Manager" },
-  { role: "VIEWER", label: "Viewer" },
-];
-
 export function useSwitchRole() {
   const router = useRouter();
   const [setRole, { loading }] = useMutation(SetRoleMutation);

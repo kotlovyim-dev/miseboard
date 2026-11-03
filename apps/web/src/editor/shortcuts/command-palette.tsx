@@ -3,7 +3,8 @@
 import { Command } from "cmdk";
 import { PALETTE_GROUPS } from "@/editor/palette/palette-groups";
 import { useEditorStore } from "@/editor/store/editor-store";
-import { ROLES, useSwitchRole } from "@/lib/role/use-switch-role";
+import { ROLES } from "@/lib/role/roles";
+import { useSwitchRole } from "@/lib/role/use-switch-role";
 import { widgetRegistry } from "@/widgets/registry";
 
 const WIDGET_TYPES = PALETTE_GROUPS.flatMap((group) => group.entries.map((entry) => entry.type));

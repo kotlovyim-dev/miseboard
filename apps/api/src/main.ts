@@ -9,12 +9,18 @@ if (!url) {
   throw new Error("DATABASE_URL is not set");
 }
 
+const secret = process.env.COOKIE_SECRET;
+if (!secret) {
+  throw new Error("COOKIE_SECRET is not set");
+}
+const cookie = { secret, isSecure: process.env.COOKIE_SECURE !== "false" };
+
 const { db, pool } = createDatabase(url);
 await runMigrations(db);
 await seedIfEmpty(db, new Date());
 
 const port = Number(process.env.PORT ?? DEFAULT_PORT);
-const server = createHttpServer(db);
+const server = createHttpServer(db, cookie);
 server.listen(port, () => logger.info({ port }, "api listening"));
 
 async function shutdown(signal: string) {

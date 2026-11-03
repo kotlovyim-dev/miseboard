@@ -1,6 +1,5 @@
-import { roles } from "../context";
-import type { Role } from "../context";
 import { builder } from "./builder";
+import { Viewer } from "./viewer";
 import "./venue";
 import "./menu-item";
 import "./inventory-item";
@@ -15,16 +14,7 @@ import "./create-app";
 import "./save-app";
 import "./delete-app";
 import "./reset-demo";
-
-const RoleEnum = builder.enumType("Role", { values: roles });
-
-const Viewer = builder.objectRef<{ role: Role }>("Viewer");
-
-Viewer.implement({
-  fields: (t) => ({
-    role: t.field({ type: RoleEnum, resolve: (viewer) => viewer.role }),
-  }),
-});
+import "./set-role";
 
 builder.queryType({
   fields: (t) => ({

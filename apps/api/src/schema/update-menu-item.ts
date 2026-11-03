@@ -15,6 +15,7 @@ const UpdateMenuItemInput = builder.inputType("UpdateMenuItemInput", {
 builder.mutationFields((t) => ({
   updateMenuItem: t.field({
     type: MenuItem,
+    authScopes: { manager: true },
     args: { input: t.arg({ type: UpdateMenuItemInput, required: true }) },
     resolve: async (_root, { input }, context) => {
       const patch = {

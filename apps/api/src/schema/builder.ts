@@ -5,7 +5,7 @@ import ScopeAuthPlugin from "@pothos/plugin-scope-auth";
 import ZodPlugin from "@pothos/plugin-zod";
 import { DateTimeResolver, JSONResolver } from "graphql-scalars";
 import type { Context } from "../context";
-import { badInput } from "../errors";
+import { badInput, forbidden } from "../errors";
 
 export const builder = new SchemaBuilder<{
   Context: Context;
@@ -21,6 +21,7 @@ export const builder = new SchemaBuilder<{
   relay: {},
   zod: { validationError: (error) => badInput(error.message) },
   scopeAuth: {
+    unauthorizedError: () => forbidden("Your role cannot do this"),
     authScopes: (context) => ({
       admin: context.role === "ADMIN",
       manager: context.role === "ADMIN" || context.role === "MANAGER",

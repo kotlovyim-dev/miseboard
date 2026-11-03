@@ -28,6 +28,7 @@ const SaveAppResult = builder.unionType("SaveAppResult", {
 builder.mutationFields((t) => ({
   saveApp: t.field({
     type: SaveAppResult,
+    authScopes: { admin: true },
     args: {
       id: t.arg.globalID({ required: true, for: App }),
       config: t.arg({ type: "JSON", required: true }),

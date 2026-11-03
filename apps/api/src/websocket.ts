@@ -1,4 +1,4 @@
-import type { Server } from "node:http";
+import type { IncomingMessage, Server } from "node:http";
 import { useServer } from "graphql-ws/use/ws";
 import { WebSocketServer } from "ws";
 import type { createGraphqlServer } from "./server";
@@ -18,6 +18,7 @@ export function serveSubscriptions(server: Server, yoga: Yoga) {
         const { schema, execute, subscribe, contextFactory, parse, validate } = yoga.getEnveloped({
           ...socketContext,
           req: socketContext.extra.request,
+          request: buildCookieRequest(socketContext.extra.request),
           socket: socketContext.extra.socket,
           params,
         });
@@ -37,4 +38,8 @@ export function serveSubscriptions(server: Server, yoga: Yoga) {
   );
 
   server.on("close", () => webSocketServer.close());
+}
+
+function buildCookieRequest({ headers }: IncomingMessage) {
+  return new Request("http://localhost", { headers: { cookie: headers.cookie ?? "" } });
 }

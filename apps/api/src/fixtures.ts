@@ -2,7 +2,10 @@ import { createDatabase, runMigrations, seedDatabase } from "@miseboard/db";
 import type { Database } from "@miseboard/db";
 import { sql } from "drizzle-orm";
 import { expect } from "vitest";
+import type { RoleCookieConfig } from "./role-cookie";
 import { createGraphqlServer } from "./server";
+
+export const TEST_COOKIE: RoleCookieConfig = { secret: "test-cookie-secret", isSecure: false };
 
 export function createTestDatabase() {
   const url = process.env.TEST_DATABASE_URL;
@@ -21,12 +24,16 @@ export async function seedTestDatabase(db: Database) {
 }
 
 export function createTestClient(db: Database) {
-  const yoga = createGraphqlServer(db);
+  const yoga = createGraphqlServer(db, TEST_COOKIE);
 
-  async function queryRaw(query: string, variables?: Record<string, unknown>) {
+  async function queryRaw(
+    query: string,
+    variables?: Record<string, unknown>,
+    headers: Record<string, string> = {},
+  ) {
     const response = await yoga.fetch("http://localhost/graphql", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...headers },
       body: JSON.stringify({ query, variables }),
     });
     return response.json();

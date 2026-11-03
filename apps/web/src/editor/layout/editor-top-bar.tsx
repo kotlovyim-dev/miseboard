@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { RoleSwitcher } from "@/components/role-switcher";
 import { ModeToggle } from "./mode-toggle";
 
 export function EditorTopBar({ appName }: { appName: string }) {
@@ -16,6 +17,9 @@ export function EditorTopBar({ appName }: { appName: string }) {
         <h1 className="truncate font-display text-sm font-semibold">{appName}</h1>
       </div>
       <ModeToggle />
+      <div className="flex justify-end">
+        <RoleSwitcher />
+      </div>
     </header>
   );
 }

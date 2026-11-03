@@ -2,8 +2,11 @@
 
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import type { AppConfigData } from "@miseboard/config";
 import { useEditorStore } from "@/editor/store/editor-store";
+import { useRole } from "@/lib/role/use-role";
 import { DesktopNotice } from "./desktop-notice";
 import { EditorTopBar } from "./editor-top-bar";
 import { PreviewPane } from "./preview-pane";
@@ -13,25 +16,35 @@ const EditorPanels = dynamic(
   { ssr: false },
 );
 
+const EDIT_DENIED_TOAST_ID = "edit-denied";
+
 interface EditorShellProps {
+  slug: string;
   appName: string;
   config: AppConfigData;
-  role: string;
 }
 
-export function EditorShell({ appName, config, role }: EditorShellProps) {
+export function EditorShell({ slug, appName, config }: EditorShellProps) {
+  const router = useRouter();
+  const { canEdit } = useRole();
   const mode = useEditorStore((state) => state.mode);
   const setConfig = useEditorStore((state) => state.setConfig);
 
   useEffect(() => setConfig(config), [config, setConfig]);
 
+  useEffect(() => {
+    if (canEdit) return;
+    toast.info("Only Admins can edit apps. Showing Preview instead.", { id: EDIT_DENIED_TOAST_ID });
+    router.replace(`/apps/${slug}`);
+  }, [canEdit, router, slug]);
+
+  if (!canEdit) return null;
+
   return (
     <div className="flex h-dvh flex-col">
       <EditorTopBar appName={appName} />
       {mode === "edit" && <DesktopNotice />}
-      <div className="min-h-0 flex-1">
-        {mode === "edit" ? <EditorPanels role={role} /> : <PreviewPane role={role} />}
-      </div>
+      <div className="min-h-0 flex-1">{mode === "edit" ? <EditorPanels /> : <PreviewPane />}</div>
     </div>
   );
 }

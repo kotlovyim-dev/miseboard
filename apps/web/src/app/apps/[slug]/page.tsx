@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
+import { EditLink } from "@/components/edit-link";
+import { RoleSwitcher } from "@/components/role-switcher";
 import { AppGrid } from "@/runtime/app-grid";
 import { AppRuntimeProvider } from "@/runtime/app-runtime-provider";
 import { DEMO_SLUG, demoApp } from "@/runtime/demo-app";
-
-const DEFAULT_ROLE = "ADMIN";
 
 export default async function AppPreviewPage({ params }: PageProps<"/apps/[slug]">) {
   const { slug } = await params;
@@ -12,12 +12,16 @@ export default async function AppPreviewPage({ params }: PageProps<"/apps/[slug]
   return (
     <>
       <header className="border-b border-border">
-        <div className="mx-auto flex h-12 max-w-6xl items-center px-4 sm:px-6">
+        <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <h1 className="font-display text-base font-semibold">{demoApp.name}</h1>
+          <div className="flex items-center gap-2">
+            <EditLink slug={slug} />
+            <RoleSwitcher />
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <AppRuntimeProvider config={demoApp.config} role={DEFAULT_ROLE}>
+        <AppRuntimeProvider config={demoApp.config}>
           <AppGrid />
         </AppRuntimeProvider>
       </main>

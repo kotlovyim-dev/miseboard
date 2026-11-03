@@ -41,6 +41,7 @@ type Mutation {
   deleteApp(id: ID!): ID!
   resetDemo: Boolean!
   saveApp(config: JSON!, expectedUpdatedAt: DateTime!, id: ID!): SaveAppResult!
+  setRole(role: Role!): Viewer!
   updateMenuItem(input: UpdateMenuItemInput!): MenuItem!
   updateOrderStatus(id: ID!, status: OrderStatus!): Order!
 }

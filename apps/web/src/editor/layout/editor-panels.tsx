@@ -19,13 +19,13 @@ const QUERY_PANEL_DEFAULT = "35%";
 const QUERY_PANEL_MIN = "15%";
 const QUERY_PANEL_COLLAPSED_PX = 36;
 
-export function EditorPanels({ role }: { role: string }) {
+export function EditorPanels() {
   const columns = useDefaultLayout({ id: "editor-columns" });
   const rows = useDefaultLayout({ id: "editor-rows" });
   const config = useEditorStore((state) => state.config);
 
   return (
-    <AppRuntimeProvider config={config} role={role}>
+    <AppRuntimeProvider config={config}>
       <EditorDnd>
         <Group orientation="horizontal" {...columns}>
           <Panel

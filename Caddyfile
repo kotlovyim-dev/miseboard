@@ -1,3 +1,9 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
@@ -11,7 +17,7 @@
 	handle /graphql {
 		rate_limit {
 			zone graphql {
-				key {http.request.remote.host}
+				key {http.request.client_ip}
 				window 1s
 				events 30
 			}

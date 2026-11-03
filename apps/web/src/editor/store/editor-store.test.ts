@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { AppConfig, EMPTY_APP_CONFIG, type WidgetType } from "@miseboard/config";
 import { demoApp } from "@/runtime/demo-app";
-import { useEditorStore } from "./editor-store";
+import { HISTORY_LIMIT, useEditorStore } from "./editor-store";
 import { nextId } from "./next-id";
 import { validateNodeId } from "./validate-node-id";
 
@@ -30,6 +30,15 @@ describe("widget actions", () => {
 
     expect(widgetIds()).toEqual(["table1", "table2"]);
     expect(store.getState().selectedId).toBe("table2");
+  });
+
+  it("duplicates a widget after the original with a new id and selects it", () => {
+    store.getState().addWidget("text");
+    store.getState().addWidget("stat");
+    store.getState().duplicateWidget("text1");
+
+    expect(widgetIds()).toEqual(["text1", "text2", "stat1"]);
+    expect(store.getState().selectedId).toBe("text2");
   });
 
   it("inserts at an index", () => {
@@ -177,5 +186,30 @@ describe("selection and ui", () => {
       mode: "preview",
       pendingDeleteId: "table1",
     });
+  });
+});
+
+describe("history", () => {
+  const history = () => store.temporal.getState();
+  beforeEach(() => history().clear());
+
+  it("undoes and redoes config changes", () => {
+    store.getState().addWidget("table");
+    history().undo();
+    expect(widgetIds()).toEqual([]);
+    history().redo();
+    expect(widgetIds()).toEqual(["table1"]);
+  });
+
+  it("does not record selection changes", () => {
+    store.getState().addWidget("table");
+    history().clear();
+    store.getState().selectNode(null);
+    expect(history().pastStates).toHaveLength(0);
+  });
+
+  it("keeps at most the history limit", () => {
+    for (let count = 0; count <= HISTORY_LIMIT + 5; count++) store.getState().addWidget("text");
+    expect(history().pastStates).toHaveLength(HISTORY_LIMIT);
   });
 });

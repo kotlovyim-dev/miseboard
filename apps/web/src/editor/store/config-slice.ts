@@ -20,6 +20,7 @@ export interface ConfigSlice {
   setConfig: (config: AppConfigData) => void;
   addWidget: (type: WidgetType, index?: number) => void;
   removeWidget: (id: string) => void;
+  duplicateWidget: (id: string) => void;
   moveWidget: (from: number, to: number) => void;
   updateWidgetProps: (id: string, props: Record<string, unknown>) => void;
   setWidgetWidth: (id: string, width: WidgetWidth) => void;
@@ -62,6 +63,20 @@ export const createConfigSlice: StateCreator<EditorState, [], [], ConfigSlice> =
     removeWidget: (id) => {
       changeConfig({ widgets: get().config.widgets.filter((widget) => widget.id !== id) });
       if (get().selectedId === id) set({ selectedId: null });
+    },
+    duplicateWidget: (id) => {
+      const { config } = get();
+      const index = config.widgets.findIndex((widget) => widget.id === id);
+      const original = config.widgets[index];
+      if (!original) return;
+      const copy = {
+        ...structuredClone(original),
+        id: nextId(config, original.type),
+      } as WidgetConfig;
+      const widgets = [...config.widgets];
+      widgets.splice(index + 1, 0, copy);
+      changeConfig({ widgets });
+      set({ selectedId: copy.id });
     },
     moveWidget: (from, to) => {
       const widgets = [...get().config.widgets];

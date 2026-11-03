@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cm6-graphql": "~0.2.2",
+    "cmdk": "~1.1.1",
     "graphql": "~16.14.2",
     "graphql-ws": "~6.4.1",
     "lucide-react": "^1.66.0",
@@ -38,6 +39,7 @@
     "rxjs": "^7.8.2",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
+    "zundo": "~2.3.0",
     "zustand": "^5.0.16"
   },
   "devDependencies": {

@@ -16,12 +16,14 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
 type Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": typeof types.OrderStatusValueFragmentDoc,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": typeof types.AppsDocument,
+    "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": typeof types.CreateAppDocument,
     "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": typeof types.ViewerDocument,
     "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": typeof types.SetRoleDocument,
 };
 const documents: Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": types.AppsDocument,
+    "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": types.CreateAppDocument,
     "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": types.ViewerDocument,
     "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": types.SetRoleDocument,
 };
@@ -48,6 +50,10 @@ export function graphql(source: "\n  fragment OrderStatusValue on Order {\n    s
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

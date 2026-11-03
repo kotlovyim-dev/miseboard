@@ -12,3 +12,15 @@ export const AppsQuery = graphql(`
     }
   }
 `);
+
+export const CreateAppMutation = graphql(`
+  mutation CreateApp($name: String!, $fromTemplate: Boolean) {
+    createApp(name: $name, fromTemplate: $fromTemplate) {
+      id
+      name
+      slug
+      config
+      updatedAt
+    }
+  }
+`);

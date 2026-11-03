@@ -32,6 +32,15 @@ describe("widget actions", () => {
     expect(store.getState().selectedId).toBe("table2");
   });
 
+  it("duplicates a widget after the original with a new id and selects it", () => {
+    store.getState().addWidget("text");
+    store.getState().addWidget("stat");
+    store.getState().duplicateWidget("text1");
+
+    expect(widgetIds()).toEqual(["text1", "text2", "stat1"]);
+    expect(store.getState().selectedId).toBe("text2");
+  });
+
   it("inserts at an index", () => {
     store.getState().addWidget("text");
     store.getState().addWidget("stat", 0);

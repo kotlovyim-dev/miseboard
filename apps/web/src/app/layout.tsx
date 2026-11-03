@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Archivo, Geist_Mono } from "next/font/google";
 import { fetchRole } from "@/lib/role/fetch-role";
 import { Providers } from "./providers";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
-const geist = Geist({ subsets: ["latin", "cyrillic"], variable: "--font-geist", display: "swap" });
+const archivo = Archivo({
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
+  variable: "--font-archivo",
+  display: "swap",
+});
 const geistMono = Geist_Mono({
   subsets: ["latin", "cyrillic"],
   variable: "--font-geist-mono",
@@ -21,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${geist.variable} ${geistMono.variable}`}
+      className={`${archivo.variable} ${geistMono.variable}`}
     >
       <body>
         <Providers role={await fetchRole()}>{children}</Providers>

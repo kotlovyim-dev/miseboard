@@ -5,7 +5,7 @@ import { HomeActions } from "@/home/home-actions";
 import { getClient } from "@/lib/apollo/server-client";
 import { AppsQuery } from "@/lib/apps/app-documents";
 
-export default async function HomePage() {
+export default async function AppsPage() {
   const { data } = await (await getClient()).query({ query: AppsQuery });
   const apps = (data?.apps ?? []).filter((app) => !app.isTemplate);
 

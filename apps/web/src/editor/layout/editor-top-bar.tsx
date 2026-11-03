@@ -17,7 +17,7 @@ export function EditorTopBar({ appName, saveStatus, onRetry }: EditorTopBarProps
     <header className="grid h-10 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-border px-3">
       <div className="flex min-w-0 items-center gap-2">
         <Link
-          href="/"
+          href="/apps"
           aria-label="Back to apps"
           className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
         >

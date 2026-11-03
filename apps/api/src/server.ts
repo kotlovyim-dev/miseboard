@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { maxAliasesPlugin } from "@escape.tech/graphql-armor-max-aliases";
 import { maxDepthPlugin } from "@escape.tech/graphql-armor-max-depth";
 import { maxTokensPlugin } from "@escape.tech/graphql-armor-max-tokens";
+import { useCSRFPrevention } from "@graphql-yoga/plugin-csrf-prevention";
 import { useCookies } from "@whatwg-node/server-plugin-cookies";
 import { createYoga } from "graphql-yoga";
 import type { Database } from "@miseboard/db";
@@ -16,6 +17,7 @@ import { serveSubscriptions } from "./websocket";
 const MAX_DEPTH = 6;
 const MAX_TOKENS = 1000;
 const MAX_ALIASES = 20;
+const CSRF_HEADER = "x-miseboard-csrf";
 
 export function createGraphqlServer(db: Database, cookie: RoleCookieConfig) {
   return createYoga({
@@ -24,6 +26,7 @@ export function createGraphqlServer(db: Database, cookie: RoleCookieConfig) {
     context: ({ request }) => createContext(db, request, cookie),
     plugins: [
       useCookies(),
+      useCSRFPrevention({ requestHeaders: [CSRF_HEADER] }),
       maxDepthPlugin({ n: MAX_DEPTH }),
       maxTokensPlugin({ n: MAX_TOKENS }),
       maxAliasesPlugin({ n: MAX_ALIASES }),

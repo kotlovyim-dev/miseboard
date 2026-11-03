@@ -2,6 +2,7 @@ import type { LandingSnapshot } from "./data/landing-snapshot";
 import { pickOrderRows } from "./data/order-rows";
 import { AdvantageSection } from "./advantage/advantage-section";
 import { Hero } from "./hero/hero";
+import { MetricsSection } from "./metrics/metrics-section";
 import { ProblemSection } from "./problem/problem-section";
 import { RolesSection } from "./roles/roles-section";
 import { SolutionSection } from "./showcase/solution-section";
@@ -17,6 +18,7 @@ export function LandingPage({ snapshot }: { snapshot: LandingSnapshot }) {
         <SolutionSection snapshot={snapshot} />
         <RolesSection />
         <AdvantageSection snapshot={snapshot} />
+        <MetricsSection />
       </main>
     </>
   );

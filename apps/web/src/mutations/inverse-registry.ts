@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
 import type { ApolloCache } from "@apollo/client";
+import { parse } from "graphql";
 
 type Variables = Record<string, unknown>;
 type Entity = Record<string, unknown>;
@@ -106,7 +106,7 @@ function readPrevious(cache: EntityCache, entry: InverseMutation, variables: Var
   if (typeof id !== "string") return null;
   const previous = cache.readFragment({
     id: cache.identify({ __typename: entry.typename, id }),
-    fragment: gql(`fragment Previous on ${entry.typename} { ${entry.fields} }`),
+    fragment: parse(`fragment Previous on ${entry.typename} { ${entry.fields} }`),
   });
   return isEntity(previous) ? previous : null;
 }

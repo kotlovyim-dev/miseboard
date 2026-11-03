@@ -99,6 +99,10 @@ enum Role {
   VIEWER
 }
 
+type Subscription {
+  orderUpdated(venueId: ID): Order!
+}
+
 input UpdateMenuItemInput {
   id: ID!
   isActive: Boolean

@@ -7,6 +7,7 @@ import "./inventory-item";
 import "./order-connection";
 import "./update-order-status";
 import "./adjust-inventory";
+import "./order-updated";
 import "./update-menu-item";
 import "./revenue-point";
 

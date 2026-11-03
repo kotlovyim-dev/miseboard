@@ -20,8 +20,10 @@
     "uuid": "^14.0.3"
   },
   "devDependencies": {
+    "@miseboard/engine": "workspace:*",
     "@types/pg": "^8.23.1",
     "drizzle-kit": "~0.31.11",
+    "graphql": "~16.14.2",
     "tsx": "~4.23.15",
     "vitest": "^5.0.5"
   }

@@ -35,4 +35,15 @@ export async function seedDatabase(db: Database, now: Date) {
 export async function seedIfEmpty(db: Database, now: Date) {
   const existing = await db.select({ id: venues.id }).from(venues).limit(1);
   if (existing.length === 0) await seedDatabase(db, now);
+  await refreshTemplate(db);
+}
+
+async function refreshTemplate(db: Database) {
+  await db
+    .insert(apps)
+    .values(restaurantOps)
+    .onConflictDoUpdate({
+      target: apps.slug,
+      set: { name: restaurantOps.name, config: restaurantOps.config, isTemplate: true },
+    });
 }

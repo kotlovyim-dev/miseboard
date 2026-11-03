@@ -39,9 +39,8 @@ describe("helpers", () => {
   });
 
   it("formats an ISO date in Kyiv time", () => {
-    const result = run("formatDate('2026-11-01T22:30:00Z')");
-
-    expect(result.ok && String(result.value)).toContain("2 лист. 2026");
+    expect(run("formatDate('2026-11-01T12:05:00Z')")).toEqual({ ok: true, value: "1 Nov, 14:05" });
+    expect(run("formatDate('2026-11-01T22:30:00Z')")).toEqual({ ok: true, value: "2 Nov, 00:30" });
   });
 
   it("rejects bad helper arguments with a message", () => {

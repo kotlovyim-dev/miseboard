@@ -208,6 +208,9 @@ importers:
       '@escape.tech/graphql-armor-max-tokens':
         specifier: ^2.5.1
         version: 2.5.1
+      '@miseboard/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@miseboard/db':
         specifier: workspace:*
         version: link:../../packages/db

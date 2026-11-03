@@ -10,6 +10,7 @@ import "./adjust-inventory";
 import "./order-updated";
 import "./update-menu-item";
 import "./revenue-point";
+import "./app";
 
 const RoleEnum = builder.enumType("Role", { values: roles });
 

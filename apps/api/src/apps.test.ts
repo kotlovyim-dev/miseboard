@@ -1,4 +1,3 @@
-import { setTimeout as sleep } from "node:timers/promises";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
 
@@ -100,7 +99,6 @@ describe("createApp", () => {
 describe("saveApp", () => {
   it("stores the config and moves updatedAt forward", async () => {
     const app = await createApp("Save me");
-    await sleep(5);
     const config = configWith("title");
 
     const data = await runQuery(SAVE_APP, {
@@ -116,7 +114,6 @@ describe("saveApp", () => {
 
   it("returns a conflict with the latest app when updatedAt is stale", async () => {
     const app = await createApp("Conflict");
-    await sleep(5);
     const saved = await runQuery(SAVE_APP, {
       id: app.id,
       config: configWith("first"),
@@ -132,6 +129,25 @@ describe("saveApp", () => {
     expect(data.saveApp.__typename).toBe("VersionConflict");
     expect(data.saveApp.latest.updatedAt).toBe(saved.saveApp.updatedAt);
     expect(data.saveApp.latest.config).toEqual(configWith("first"));
+  });
+
+  it("returns a conflict for a stale save made right after another save", async () => {
+    const app = await createApp("Back to back");
+
+    const first = await runQuery(SAVE_APP, {
+      id: app.id,
+      config: configWith("first"),
+      expectedUpdatedAt: app.updatedAt,
+    });
+    const second = await runQuery(SAVE_APP, {
+      id: app.id,
+      config: configWith("second"),
+      expectedUpdatedAt: app.updatedAt,
+    });
+
+    expect(first.saveApp.updatedAt > app.updatedAt).toBe(true);
+    expect(second.saveApp.__typename).toBe("VersionConflict");
+    expect(second.saveApp.latest.config).toEqual(configWith("first"));
   });
 
   it("rejects duplicate ids and names the id", async () => {

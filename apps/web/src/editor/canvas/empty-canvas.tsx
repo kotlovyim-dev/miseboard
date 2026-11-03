@@ -2,9 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/editor/store/editor-store";
+import { useCreateApp } from "@/lib/apps/use-create-app";
 
 export function EmptyCanvas() {
   const addWidget = useEditorStore((state) => state.addWidget);
+  const { createFromTemplate, isCreating } = useCreateApp();
 
   return (
     <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border p-6">
@@ -21,8 +23,8 @@ export function EmptyCanvas() {
         <Button
           size="sm"
           variant="secondary"
-          disabled
-          title="The Restaurant Ops template is not available yet"
+          disabled={isCreating}
+          onClick={() => void createFromTemplate()}
         >
           Open template
         </Button>

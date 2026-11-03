@@ -22,6 +22,7 @@ import type { TableColumn, TableRowAction } from "./table-columns";
 import { TablePagination } from "./table-pagination";
 
 const ROW_ACTION_COLUMN_ID = "__rowAction";
+const PINNED_ACTION_CLASS = "sticky right-0 bg-card";
 
 export function TableWidget({ id, props, state, setState }: WidgetComponentProps) {
   const scope = useRuntimeScope();
@@ -68,6 +69,7 @@ export function TableWidget({ id, props, state, setState }: WidgetComponentProps
                     className={cn(
                       "border-b px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground",
                       isNumeric(header.column.id) && "text-right",
+                      header.column.id === ROW_ACTION_COLUMN_ID && PINNED_ACTION_CLASS,
                     )}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -88,7 +90,7 @@ export function TableWidget({ id, props, state, setState }: WidgetComponentProps
                   event.preventDefault();
                   selectRow(row);
                 }}
-                className="cursor-pointer outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset aria-[current=true]:bg-accent"
+                className="group cursor-pointer outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset aria-[current=true]:bg-accent"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
@@ -96,6 +98,8 @@ export function TableWidget({ id, props, state, setState }: WidgetComponentProps
                     className={cn(
                       "border-b px-3 py-2 whitespace-nowrap",
                       isNumeric(cell.column.id) && "text-right",
+                      cell.column.id === ROW_ACTION_COLUMN_ID &&
+                        `${PINNED_ACTION_CLASS} group-hover:bg-muted group-aria-[current=true]:bg-accent`,
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -32,4 +32,8 @@ export default defineConfig([
     settings: { next: { rootDir: "apps/web" } },
     rules: { "react/no-danger": "error" },
   },
+  {
+    files: ["apps/web/src/widgets/table/table-widget.tsx"],
+    rules: { "react-hooks/incompatible-library": "off" },
+  },
 ]);

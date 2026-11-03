@@ -14,6 +14,13 @@ describe("TextWidget", () => {
     expect(render("**bold**")).toContain("<strong>bold</strong>");
   });
 
+  it("renders a top heading one level down so the page keeps a single h1", () => {
+    const html = render("# Title");
+
+    expect(html).toContain("<h2>Title</h2>");
+    expect(html).not.toContain("<h1");
+  });
+
   it("drops raw html", () => {
     expect(render("hi <script>alert(1)</script><b>x</b>")).not.toMatch(/<script|<b>/);
   });

@@ -62,6 +62,17 @@ const StatWidget = z.object({
   }),
 });
 
+const ChartWidget = z.object({
+  ...WidgetBase,
+  type: z.literal("chart"),
+  props: z.object({
+    data: Template,
+    xKey: z.string(),
+    yKey: z.string(),
+    format: z.enum(["number", "uah", "percent"]).default("number"),
+  }),
+});
+
 const TextWidget = z.object({
   ...WidgetBase,
   type: z.literal("text"),
@@ -93,6 +104,7 @@ const FormWidget = z.object({
 export const WidgetDef = z.discriminatedUnion("type", [
   TableWidget,
   StatWidget,
+  ChartWidget,
   TextWidget,
   SelectWidget,
   FormWidget,

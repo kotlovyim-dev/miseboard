@@ -8,7 +8,7 @@ describe("parseAppConfig", () => {
     const result = parseAppConfig(fullConfig);
 
     if (!result.ok) throw new Error(result.message);
-    expect(result.config.widgets).toHaveLength(5);
+    expect(result.config.widgets).toHaveLength(6);
   });
 
   it("accepts the empty config", () => {

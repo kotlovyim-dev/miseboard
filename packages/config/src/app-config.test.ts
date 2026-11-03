@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { AppConfig, IdSchema, WidgetDef } from "./app-config";
 import {
+  chartWidget,
   formWidget,
   fullConfig,
   markReadyMutation,
@@ -61,7 +62,7 @@ describe("AppConfig", () => {
 });
 
 describe("WidgetDef", () => {
-  it.each([tableWidget, statWidget, textWidget, selectWidget, formWidget])(
+  it.each([tableWidget, statWidget, chartWidget, textWidget, selectWidget, formWidget])(
     "accepts a $type widget",
     (widget) => {
       expect(WidgetDef.safeParse(widget).success).toBe(true);
@@ -78,8 +79,15 @@ describe("WidgetDef", () => {
     expect(parsed.type === "form" && parsed.props.fields[0]?.options).toBe("{{ items.data }}");
   });
 
+  it("defaults the chart format to number", () => {
+    const props = { data: chartWidget.props.data, xKey: "day", yKey: "total" };
+    const parsed = WidgetDef.parse({ ...chartWidget, props });
+
+    expect(parsed.type === "chart" && parsed.props.format).toBe("number");
+  });
+
   it("rejects an unknown widget type", () => {
-    expect(WidgetDef.safeParse({ ...textWidget, type: "chart" }).success).toBe(false);
+    expect(WidgetDef.safeParse({ ...textWidget, type: "gauge" }).success).toBe(false);
   });
 
   it.each([3, 4, 6, 12])("accepts a width of %i", (width) => {

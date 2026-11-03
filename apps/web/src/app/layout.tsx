@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MiseBoard",
+  title: "Mise",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

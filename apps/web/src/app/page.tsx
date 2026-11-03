@@ -13,7 +13,7 @@ export default async function HomePage() {
     <>
       <header className="border-b border-border">
         <div className="mx-auto flex h-12 max-w-4xl items-center justify-between px-4 sm:px-6">
-          <span className="font-display text-xl">MiseBoard</span>
+          <span className="font-display text-xl">Mise</span>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <RoleSwitcher />

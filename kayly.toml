@@ -2,7 +2,7 @@
 dockerfile = "infra/kayly/Dockerfile"
 
 [services.proxy]
-command = "sh -c 'SITE_ADDRESS=:8080 exec caddy run --config /app/Caddyfile --adapter caddyfile'"
+command = "sh -c 'SITE_ADDRESS=:8080 ALLOWED_HOST=mise.kaymos.site exec caddy run --config /app/Caddyfile --adapter caddyfile'"
 port = 8080
 health = "/healthz"
 memory = "96m"

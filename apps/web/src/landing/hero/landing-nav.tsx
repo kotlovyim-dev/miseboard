@@ -3,7 +3,6 @@ import { DEMO_HREF, GITHUB_HREF } from "../layout/landing-links";
 import { LandingButton } from "../layout/landing-button";
 
 const NAV_LINKS = [
-  { label: "Demo", href: DEMO_HREF },
   { label: "How it works", href: "#how-it-works" },
   { label: "GitHub", href: GITHUB_HREF },
 ];

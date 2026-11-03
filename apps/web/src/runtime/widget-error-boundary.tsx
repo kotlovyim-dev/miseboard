@@ -22,6 +22,12 @@ export class WidgetErrorBoundary extends Component<
     return { message: error instanceof Error ? error.message : String(error) };
   }
 
+  override componentDidUpdate(previous: WidgetErrorBoundaryProps) {
+    if (this.state.message !== null && previous.children !== this.props.children) {
+      this.setState({ message: null });
+    }
+  }
+
   override render() {
     const { message } = this.state;
     return message === null ? this.props.children : this.props.fallback(message);

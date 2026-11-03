@@ -13,6 +13,7 @@ import { useRuntimeScope } from "@/runtime/runtime-context";
 import type { WidgetComponentProps, WidgetState } from "../types";
 import { isNumericColumn } from "./cell-format";
 import { evaluateRows } from "./evaluate-rows";
+import { isSelectedRow } from "./is-selected-row";
 import type { EvaluatedRow } from "./evaluate-rows";
 import { TableCell } from "./table-cell";
 import { readColumns, readPageSize, readRecords } from "./table-columns";
@@ -76,7 +77,7 @@ export function TableWidget({ id, props, state, setState }: WidgetComponentProps
               <tr
                 key={row.id}
                 tabIndex={0}
-                aria-current={state.selectedRow === row.original.source || undefined}
+                aria-current={isSelectedRow(state.selectedRow, row.original.source) || undefined}
                 onClick={() => selectRow(row)}
                 onKeyDown={(event) => {
                   if (event.key !== "Enter" && event.key !== " ") return;

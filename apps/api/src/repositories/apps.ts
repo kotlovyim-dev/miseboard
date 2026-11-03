@@ -1,4 +1,4 @@
-import { desc, eq, inArray, like } from "drizzle-orm";
+import { and, desc, eq, inArray, like } from "drizzle-orm";
 import { apps } from "@miseboard/db";
 import type { Database } from "@miseboard/db";
 import { pickFreeSlug } from "../slug";
@@ -32,5 +32,19 @@ export async function insertApp(db: Database, name: string, baseSlug: string, co
   );
   const [app] = await db.insert(apps).values({ name, slug, config }).returning();
   if (!app) throw new Error("Inserting the app returned no row");
+  return app;
+}
+
+export async function updateAppConfig(
+  db: Database,
+  id: string,
+  config: unknown,
+  expectedUpdatedAt: Date,
+) {
+  const [app] = await db
+    .update(apps)
+    .set({ config, updatedAt: new Date() })
+    .where(and(eq(apps.id, id), eq(apps.isTemplate, false), eq(apps.updatedAt, expectedUpdatedAt)))
+    .returning();
   return app;
 }

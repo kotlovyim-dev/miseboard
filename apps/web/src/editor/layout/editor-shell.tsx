@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ConflictDialog } from "@/editor/persistence/conflict-dialog";
 import { useAutosave } from "@/editor/persistence/use-autosave";
 import { useEditorStore } from "@/editor/store/editor-store";
 import type { LoadedApp } from "@/lib/apps/load-app";
@@ -42,6 +43,11 @@ export function EditorShell({ app }: { app: LoadedApp }) {
       <EditorTopBar appName={name} saveStatus={autosave.status} onRetry={autosave.retry} />
       {mode === "edit" && <DesktopNotice />}
       <div className="min-h-0 flex-1">{mode === "edit" ? <EditorPanels /> : <PreviewPane />}</div>
+      <ConflictDialog
+        isOpen={autosave.status === "conflict"}
+        onReload={autosave.reload}
+        onOverwrite={autosave.overwrite}
+      />
     </div>
   );
 }

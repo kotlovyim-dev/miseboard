@@ -13,6 +13,7 @@ export const QueryDef = z.object({
   document: z.string().max(5000),
   variables: z.record(z.string(), Template).default({}),
   trigger: z.enum(["onLoad", "manual"]).default("onLoad"),
+  transformer: z.string().max(2000).optional(),
 });
 
 const WidgetBase = {

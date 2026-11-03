@@ -1,10 +1,10 @@
 "use client";
 
-import { IdChip } from "@/components/id-chip";
 import { PanelHeader } from "@/editor/layout/panel-header";
 import { useEditorStore } from "@/editor/store/editor-store";
 import { widgetRegistry } from "@/widgets/registry";
 import { FieldEditor } from "./field-editor";
+import { NodeIdField } from "./node-id-field";
 import { WidthControl } from "./width-control";
 
 export function InspectorPanel() {
@@ -24,7 +24,7 @@ export function InspectorPanel() {
         <div className="min-h-0 flex-1 divide-y divide-border overflow-auto">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
-              <IdChip id={widget.id} />
+              <NodeIdField key={widget.id} id={widget.id} />
               <span className="text-sm text-muted-foreground">{definition.label}</span>
             </div>
             <WidthControl

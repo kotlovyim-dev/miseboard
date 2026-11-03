@@ -1,6 +1,5 @@
 import {
   EMPTY_APP_CONFIG,
-  IdSchema,
   type AppConfigData,
   type QueryConfig,
   type WidgetConfig,
@@ -11,6 +10,7 @@ import type { StateCreator } from "zustand";
 import { widgetRegistry } from "@/widgets/registry";
 import type { EditorState } from "./editor-store";
 import { nextId } from "./next-id";
+import { validateNodeId } from "./validate-node-id";
 
 const DEFAULT_WIDGET_WIDTH: WidgetWidth = 6;
 const QUERY_ID_PREFIX = "query";
@@ -77,8 +77,7 @@ export const createConfigSlice: StateCreator<EditorState, [], [], ConfigSlice> =
     setWidgetWidth: (id, width) => mapWidget(id, (widget) => ({ ...widget, width })),
     renameNode: (id, newId) => {
       const { config, selectedId, activeQueryId } = get();
-      const isTaken = [...config.widgets, ...config.queries].some((node) => node.id === newId);
-      if (!IdSchema.safeParse(newId).success || isTaken) return;
+      if (validateNodeId(config, id, newId)) return;
       const rename = <T extends { id: string }>(node: T) =>
         node.id === id ? { ...node, id: newId } : node;
       changeConfig({ widgets: config.widgets.map(rename), queries: config.queries.map(rename) });

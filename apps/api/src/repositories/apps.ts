@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, like } from "drizzle-orm";
+import { and, desc, eq, inArray, like, sql } from "drizzle-orm";
 import { apps } from "@miseboard/db";
 import type { Database } from "@miseboard/db";
 import { pickFreeSlug } from "../slug";
@@ -43,7 +43,7 @@ export async function updateAppConfig(
 ) {
   const [app] = await db
     .update(apps)
-    .set({ config, updatedAt: new Date() })
+    .set({ config, updatedAt: sql`greatest(now(), ${apps.updatedAt} + interval '1 millisecond')` })
     .where(and(eq(apps.id, id), eq(apps.isTemplate, false), eq(apps.updatedAt, expectedUpdatedAt)))
     .returning();
   return app;

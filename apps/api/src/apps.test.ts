@@ -1,3 +1,4 @@
+import { setTimeout as sleep } from "node:timers/promises";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createTestClient, createTestDatabase, seedTestDatabase } from "./fixtures";
 
@@ -99,6 +100,7 @@ describe("createApp", () => {
 describe("saveApp", () => {
   it("stores the config and moves updatedAt forward", async () => {
     const app = await createApp("Save me");
+    await sleep(5);
     const config = configWith("title");
 
     const data = await runQuery(SAVE_APP, {
@@ -114,6 +116,7 @@ describe("saveApp", () => {
 
   it("returns a conflict with the latest app when updatedAt is stale", async () => {
     const app = await createApp("Conflict");
+    await sleep(5);
     const saved = await runQuery(SAVE_APP, {
       id: app.id,
       config: configWith("first"),

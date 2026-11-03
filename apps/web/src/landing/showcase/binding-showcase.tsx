@@ -7,13 +7,7 @@ import { BINDING_EXAMPLES, PREFILLED_BINDING } from "./binding-examples";
 import { BindingAnswer } from "./binding-answer";
 import { buildBindingScope } from "./binding-scope";
 
-export function BindingShowcase({
-  snapshot,
-  headingId,
-}: {
-  snapshot: LandingSnapshot;
-  headingId: string;
-}) {
+export function BindingShowcase({ snapshot }: { snapshot: LandingSnapshot }) {
   const [source, setSource] = useState(PREFILLED_BINDING);
   const scope = useMemo(() => buildBindingScope(snapshot), [snapshot]);
   const result = evaluateTemplate(source, scope);
@@ -23,7 +17,7 @@ export function BindingShowcase({
       <input
         value={source}
         onChange={(event) => setSource(event.target.value)}
-        aria-labelledby={headingId}
+        aria-label="Binding expression"
         spellCheck={false}
         autoComplete="off"
         className="w-full bg-transparent landing-code text-[clamp(40px,4.2vw,132px)] leading-tight tracking-tight text-foreground [caret-shape:block] outline-none focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-ring"

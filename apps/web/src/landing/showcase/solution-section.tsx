@@ -12,7 +12,7 @@ export function SolutionSection({ snapshot }: { snapshot: LandingSnapshot }) {
         <SectionHeading id="showcase-heading">Type a binding. The kitchen answers.</SectionHeading>
       </Reveal>
       <Reveal delay={100} className="mt-16 md:mt-24">
-        <BindingShowcase snapshot={snapshot} headingId="showcase-heading" />
+        <BindingShowcase snapshot={snapshot} />
       </Reveal>
       <StagesBar />
     </LandingSection>

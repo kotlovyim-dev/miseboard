@@ -40,14 +40,14 @@ export function AdvantageRows({ snapshot }: AdvantageRowsProps) {
   return (
     <ul className="space-y-20 md:space-y-28">
       {rows.map(({ title, text, crop, width }) => (
-        <li key={title} className="grid items-start gap-8 lg:grid-cols-12">
-          <Reveal className="lg:col-span-4 lg:col-start-5">
+        <li key={title} className="grid items-start gap-8 lg:grid-cols-8">
+          <Reveal className="lg:col-span-4">
             <h3 className="font-display text-heading leading-[0.95]">{title}</h3>
             <p className="mt-4 max-w-[34ch] text-lg leading-relaxed">{text}</p>
           </Reveal>
           <Reveal
             delay={120}
-            className={`lg:col-span-4 lg:col-start-9 lg:justify-self-end ${width}`}
+            className={`lg:col-span-4 lg:col-start-5 lg:justify-self-end ${width}`}
           >
             {crop}
           </Reveal>

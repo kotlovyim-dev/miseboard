@@ -18,7 +18,7 @@ const STACK = [
   "CodeMirror",
   "TanStack Table",
   "Zod",
-  "a hand-written expression engine",
+  "an expression engine",
 ];
 const LIGHT_INTERVAL_MS = 2000;
 

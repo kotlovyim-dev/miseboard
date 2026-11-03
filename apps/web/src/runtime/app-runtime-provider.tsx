@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import type { AppConfigData } from "@miseboard/config";
 import { widgetRegistry } from "@/widgets/registry";
 import { connectEngine } from "./connect-engine";
-import { createRuntime } from "./create-runtime";
-import { startQueryRunner } from "./query-runner";
-import type { QueryRunner } from "./query-runner";
+import { buildEngine, createRuntime, syncRuntime } from "./create-runtime";
+import { createQueryRunner } from "./query-runner";
 import { RuntimeContext } from "./runtime-context";
 
 interface AppRuntimeProviderProps {
@@ -18,27 +17,28 @@ interface AppRuntimeProviderProps {
 
 export function AppRuntimeProvider({ config, role, children }: AppRuntimeProviderProps) {
   const client = useApolloClient();
-  const runtime = useMemo(() => createRuntime(config, role, widgetRegistry), [config, role]);
-  const runnerRef = useRef<QueryRunner | null>(null);
+  const [{ store }] = useState(() => createRuntime(config, role, widgetRegistry));
+  const engine = useMemo(() => buildEngine(config, widgetRegistry), [config]);
+  const runner = useMemo(() => createQueryRunner(client, store), [client, store]);
 
   useEffect(() => {
-    const stopEngine = connectEngine(runtime.store, runtime.engine);
-    const runner = startQueryRunner(client, config.queries, runtime.store);
-    runnerRef.current = runner;
-    return () => {
-      runner.stop();
-      stopEngine();
-    };
-  }, [client, config, runtime]);
+    syncRuntime(store, engine, config, role, widgetRegistry);
+    return connectEngine(store, engine);
+  }, [store, engine, config, role]);
+
+  useEffect(() => runner.stop, [runner]);
+
+  useEffect(() => runner.sync(config.queries), [runner, config.queries]);
 
   const value = useMemo(
     () => ({
-      store: runtime.store,
-      engine: runtime.engine,
+      store,
+      engine,
       config,
-      retryQuery: (queryId: string) => runnerRef.current?.retry(queryId),
+      retryQuery: runner.retry,
+      runQuery: runner.run,
     }),
-    [runtime, config],
+    [store, engine, config, runner],
   );
 
   return <RuntimeContext.Provider value={value}>{children}</RuntimeContext.Provider>;

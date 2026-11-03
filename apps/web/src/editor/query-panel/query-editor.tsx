@@ -16,7 +16,7 @@ export function QueryEditor({ query }: { query: QueryConfig }) {
   const updateQuery = useEditorStore((state) => state.updateQuery);
   const { schema, error } = useClientSchema();
   const issues = useMemo(() => validateDocument(query.document, schema), [query.document, schema]);
-  const { result, isRunning, run } = useRunQuery(query);
+  const { result, isRunning, run } = useRunQuery(query.id);
   const blockedReason = issues.length > 0 ? "Fix the errors in the document to run." : null;
   const canRun = blockedReason === null && !isRunning;
 

@@ -2,7 +2,7 @@ import { CircleAlert } from "lucide-react";
 import { IdChip } from "@/components/id-chip";
 import { isEmptyResult } from "./is-empty-result";
 import { JsonTree } from "./json-tree";
-import type { RunResult } from "./use-run-query";
+import type { RunResult } from "@/runtime/query-runner";
 
 interface QueryResultProps {
   queryId: string;

@@ -18,7 +18,19 @@ export interface WatchedQuery {
   refetch: (variables?: Record<string, unknown>) => Promise<unknown>;
 }
 
+export interface RunResult {
+  variables: Record<string, unknown>;
+  data?: unknown;
+  error?: string;
+  durationMs?: number;
+}
+
 export interface QueryClient {
+  query: (options: {
+    query: DocumentNode;
+    variables: Record<string, unknown>;
+    fetchPolicy: "network-only";
+  }) => Promise<unknown>;
   watchQuery: (options: {
     query: DocumentNode;
     variables: Record<string, unknown>;
@@ -26,28 +38,49 @@ export interface QueryClient {
 }
 
 export interface QueryRunner {
+  run: (queryId: string) => Promise<RunResult>;
+  sync: (queries: readonly QueryConfig[]) => void;
   retry: (queryId: string) => void;
   stop: () => void;
 }
 
 interface QueryTask {
+  update: (query: QueryConfig) => void;
   retry: () => void;
   stop: () => void;
 }
 
 type Variables = { ok: true; values: Record<string, unknown> } | { ok: false; error: string };
 
-export function startQueryRunner(
-  client: QueryClient,
-  queries: readonly QueryConfig[],
-  store: RuntimeStore,
-): QueryRunner {
-  const onLoadQueries = queries.filter(isOnLoadQuery);
-  const tasks = new Map(onLoadQueries.map((query) => [query.id, startTask(client, query, store)]));
+export function createQueryRunner(client: QueryClient, store: RuntimeStore): QueryRunner {
+  const tasks = new Map<string, QueryTask>();
+  let known: readonly QueryConfig[] = [];
+
+  const stopTask = (queryId: string) => {
+    tasks.get(queryId)?.stop();
+    tasks.delete(queryId);
+  };
 
   return {
+    run: (queryId) =>
+      runQuery(
+        client,
+        store,
+        known.find((query) => query.id === queryId),
+      ),
+    sync: (queries) => {
+      known = queries;
+      const onLoad = queries.filter(isOnLoadQuery);
+      const ids = new Set(onLoad.map((query) => query.id));
+      [...tasks.keys()].filter((id) => !ids.has(id)).forEach(stopTask);
+      for (const query of onLoad) {
+        const task = tasks.get(query.id);
+        if (task) task.update(query);
+        else tasks.set(query.id, startTask(client, query, store));
+      }
+    },
     retry: (queryId) => tasks.get(queryId)?.retry(),
-    stop: () => tasks.forEach((task) => task.stop()),
+    stop: () => [...tasks.keys()].forEach(stopTask),
   };
 }
 
@@ -55,22 +88,27 @@ function isOnLoadQuery(query: QueryConfig) {
   return query.kind === "query" && query.trigger === "onLoad";
 }
 
-function startTask(client: QueryClient, query: QueryConfig, store: RuntimeStore): QueryTask {
+function startTask(client: QueryClient, initial: QueryConfig, store: RuntimeStore): QueryTask {
+  let query = initial;
   let watched: WatchedQuery | undefined;
   let subscription: { unsubscribe: () => void } | undefined;
+  let watchedDocument = "";
   let lastVariables = "";
 
   const fail = (error: string) => {
     store.getState().setQueryState(query.id, { data: undefined, isLoading: false, error });
   };
 
-  const start = () => {
-    const variables = readVariables(store, query.id);
-    const document = parseDocument(query.document);
-    if (!variables.ok) return fail(variables.error);
-    if (!document.ok) return fail(document.error);
-    lastVariables = JSON.stringify(variables.values);
-    watched = client.watchQuery({ query: document.value, variables: variables.values });
+  const stopWatching = () => {
+    subscription?.unsubscribe();
+    watched = undefined;
+  };
+
+  const watch = (document: DocumentNode, variables: Record<string, unknown>) => {
+    stopWatching();
+    watchedDocument = query.document;
+    lastVariables = JSON.stringify(variables);
+    watched = client.watchQuery({ query: document, variables });
     subscription = watched.subscribe((result) => {
       store.getState().setQueryState(query.id, {
         data: result.data,
@@ -90,31 +128,71 @@ function startTask(client: QueryClient, query: QueryConfig, store: RuntimeStore)
     watched?.refetch(variables).catch(() => undefined);
   };
 
-  const applyVariables = () => {
+  const apply = () => {
     const variables = readVariables(store, query.id);
+    const document = parseDocument(query.document);
     if (!variables.ok) return fail(variables.error);
-    if (!watched) return start();
+    if (!document.ok) {
+      stopWatching();
+      return fail(document.error);
+    }
+    if (!watched || watchedDocument !== query.document)
+      return watch(document.value, variables.values);
     const serialized = JSON.stringify(variables.values);
     if (serialized === lastVariables) return;
     lastVariables = serialized;
     refetch(variables.values);
   };
 
-  const scheduleVariables = debounce(applyVariables, VARIABLE_DEBOUNCE_MS);
+  const scheduleApply = debounce(apply, VARIABLE_DEBOUNCE_MS);
   const unwatchStore = store.subscribe((state, previous) => {
-    if (state.evaluations.get(query.id) !== previous.evaluations.get(query.id)) scheduleVariables();
+    if (state.evaluations.get(query.id) !== previous.evaluations.get(query.id)) scheduleApply();
   });
 
-  start();
+  apply();
 
   return {
-    retry: () => (watched ? refetch() : start()),
+    update: (next) => {
+      if (next === query) return;
+      query = next;
+      scheduleApply();
+    },
+    retry: () => (watched ? refetch() : apply()),
     stop: () => {
-      scheduleVariables.cancel();
+      scheduleApply.cancel();
       unwatchStore();
-      subscription?.unsubscribe();
+      stopWatching();
     },
   };
+}
+
+async function runQuery(
+  client: QueryClient,
+  store: RuntimeStore,
+  query: QueryConfig | undefined,
+): Promise<RunResult> {
+  if (!query) return { variables: {}, error: "Unknown query" };
+  const variables = readVariables(store, query.id);
+  const document = parseDocument(query.document);
+  if (!variables.ok) return { variables: {}, error: variables.error };
+  if (!document.ok) return { variables: variables.values, error: document.error };
+  const previous = store.getState().queryStates[query.id];
+  const setState = store.getState().setQueryState;
+  setState(query.id, { data: previous?.data, isLoading: true, error: null });
+  const startedAt = performance.now();
+  try {
+    const { data } = (await client.query({
+      query: document.value,
+      variables: variables.values,
+      fetchPolicy: "network-only",
+    })) as { data?: unknown };
+    setState(query.id, { data, isLoading: false, error: null });
+    return { variables: variables.values, data, durationMs: performance.now() - startedAt };
+  } catch (caught) {
+    const error = caught instanceof Error ? caught.message : String(caught);
+    setState(query.id, { data: previous?.data, isLoading: false, error });
+    return { variables: variables.values, error, durationMs: performance.now() - startedAt };
+  }
 }
 
 export function readVariables(store: RuntimeStore, queryId: string): Variables {

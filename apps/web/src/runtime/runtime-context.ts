@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import type { AppConfigData } from "@miseboard/config";
 import type { Engine } from "@miseboard/engine";
 import { buildScope } from "./connect-engine";
+import type { RunResult } from "./query-runner";
 import type { RuntimeState, RuntimeStore } from "./runtime-store";
 
 export interface RuntimeContextValue {
@@ -13,6 +14,7 @@ export interface RuntimeContextValue {
   engine: Engine;
   config: AppConfigData;
   retryQuery: (queryId: string) => void;
+  runQuery: (queryId: string) => Promise<RunResult>;
 }
 
 export const RuntimeContext = createContext<RuntimeContextValue | null>(null);

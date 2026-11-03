@@ -37,6 +37,7 @@ const FormField = z.object({
   label: z.string(),
   type: z.enum(["text", "number", "select"]),
   default: Template.optional(),
+  options: Template.optional(),
 });
 
 const TableWidget = z.object({

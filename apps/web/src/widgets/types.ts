@@ -22,7 +22,7 @@ interface SelectField extends FieldBase {
 }
 
 interface PlainField extends FieldBase {
-  kind: "template" | "text" | "columns" | "fields" | "rowAction";
+  kind: "template" | "text" | "columns" | "fields" | "rowAction" | "mutation" | "variables";
 }
 
 export type InspectorField = PlainField | NumberField | SelectField;

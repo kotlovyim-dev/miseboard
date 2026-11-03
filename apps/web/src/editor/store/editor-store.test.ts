@@ -55,10 +55,11 @@ describe("widget actions", () => {
     expect(added?.type === "select" && added.props.options).toBe("{{ ordersQuery.data }}");
   });
 
-  it("ignores widget types without a definition", () => {
+  it("adds a form with no fields", () => {
     store.getState().addWidget("form");
 
-    expect(widgetIds()).toEqual([]);
+    const added = store.getState().config.widgets.at(-1);
+    expect(added?.type === "form" && added.props.fields).toEqual([]);
   });
 
   it("removes a widget and clears its selection", () => {

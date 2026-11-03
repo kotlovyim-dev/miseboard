@@ -15,6 +15,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  */
 type Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": typeof types.OrderStatusValueFragmentDoc,
+    "\n  query Landing($from: DateTime!, $to: DateTime!) {\n    venues {\n      id\n      name\n      revenue(from: $from, to: $to) {\n        total\n        orders\n      }\n    }\n    orders(first: 20) {\n      edges {\n        node {\n          id\n          status\n          total\n          createdAt\n        }\n      }\n    }\n  }\n": typeof types.LandingDocument,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": typeof types.AppsDocument,
     "\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": typeof types.AppDocument,
     "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": typeof types.CreateAppDocument,
@@ -27,6 +28,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
+    "\n  query Landing($from: DateTime!, $to: DateTime!) {\n    venues {\n      id\n      name\n      revenue(from: $from, to: $to) {\n        total\n        orders\n      }\n    }\n    orders(first: 20) {\n      edges {\n        node {\n          id\n          status\n          total\n          createdAt\n        }\n      }\n    }\n  }\n": types.LandingDocument,
     "\n  query Apps {\n    apps {\n      id\n      name\n      slug\n      config\n      isTemplate\n      updatedAt\n    }\n  }\n": types.AppsDocument,
     "\n  query App($slug: String!) {\n    app(slug: $slug) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": types.AppDocument,
     "\n  mutation CreateApp($name: String!, $fromTemplate: Boolean) {\n    createApp(name: $name, fromTemplate: $fromTemplate) {\n      id\n      name\n      slug\n      config\n      updatedAt\n    }\n  }\n": types.CreateAppDocument,
@@ -56,6 +58,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment OrderStatusValue on Order {\n    status\n  }\n"): (typeof documents)["\n  fragment OrderStatusValue on Order {\n    status\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Landing($from: DateTime!, $to: DateTime!) {\n    venues {\n      id\n      name\n      revenue(from: $from, to: $to) {\n        total\n        orders\n      }\n    }\n    orders(first: 20) {\n      edges {\n        node {\n          id\n          status\n          total\n          createdAt\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query Landing($from: DateTime!, $to: DateTime!) {\n    venues {\n      id\n      name\n      revenue(from: $from, to: $to) {\n        total\n        orders\n      }\n    }\n    orders(first: 20) {\n      edges {\n        node {\n          id\n          status\n          total\n          createdAt\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

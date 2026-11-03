@@ -1,5 +1,13 @@
 import type { WidgetType } from "@miseboard/config";
-import { BarChart3, FileText, ListFilter, SquarePen, Table2, type LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  ChartColumn,
+  FileText,
+  ListFilter,
+  SquarePen,
+  Table2,
+  type LucideIcon,
+} from "lucide-react";
 
 export interface PaletteEntry {
   type: WidgetType;
@@ -18,6 +26,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
     entries: [
       { type: "table", hint: "Rows from a query", Icon: Table2 },
       { type: "stat", hint: "One number, large", Icon: BarChart3 },
+      { type: "chart", hint: "Values as bars", Icon: ChartColumn },
     ],
   },
   {

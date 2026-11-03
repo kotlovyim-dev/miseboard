@@ -3,13 +3,34 @@
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useEditorStore } from "@/editor/store/editor-store";
+import { useClientSchema } from "@/lib/schema/use-client-schema";
+import { fieldsFromMutation } from "@/widgets/form/fields-from-mutation";
 import type { FormFieldConfig, FormFieldType } from "@/widgets/form/form-fields";
 import type { FieldEditorProps, FieldOfKind } from "./field-editor-props";
 
 const TYPES: FormFieldType[] = ["text", "number", "select"];
 
-export function FieldsEditor({ field, value, onChange }: FieldEditorProps<FieldOfKind<"fields">>) {
+export function FieldsEditor({
+  field,
+  widgetId,
+  value,
+  onChange,
+}: FieldEditorProps<FieldOfKind<"fields">>) {
   const fields: FormFieldConfig[] = Array.isArray(value) ? value : [];
+
+  const { schema } = useClientSchema();
+  const mutationDocument = useEditorStore((state) => {
+    const props: Record<string, unknown> | undefined = state.config.widgets.find(
+      (widget) => widget.id === widgetId,
+    )?.props;
+    return state.config.queries.find((query) => query.id === props?.mutation)?.document;
+  });
+  const canGenerate = schema !== undefined && mutationDocument !== undefined;
+
+  const generateFields = () => {
+    if (canGenerate) onChange(fieldsFromMutation(schema, mutationDocument));
+  };
 
   const changeField = (index: number, changes: Partial<FormFieldConfig>) =>
     onChange(
@@ -87,10 +108,21 @@ export function FieldsEditor({ field, value, onChange }: FieldEditorProps<FieldO
           )}
         </div>
       ))}
-      <Button type="button" variant="outline" size="sm" onClick={addField}>
-        <Plus aria-hidden strokeWidth={1.5} />
-        Add field
-      </Button>
+      <div className="flex gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={addField}>
+          <Plus aria-hidden strokeWidth={1.5} />
+          Add field
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!canGenerate}
+          onClick={generateFields}
+        >
+          Fill from mutation
+        </Button>
+      </div>
     </fieldset>
   );
 }

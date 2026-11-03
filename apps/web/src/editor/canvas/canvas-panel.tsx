@@ -26,6 +26,7 @@ export function CanvasPanel({ role }: { role: string }) {
       <PanelHeader title="Canvas" />
       <div
         ref={setNodeRef}
+        role="presentation"
         onClick={() => selectNode(null)}
         onKeyDown={handleKeyDown}
         className="min-h-0 flex-1 overflow-auto p-4"

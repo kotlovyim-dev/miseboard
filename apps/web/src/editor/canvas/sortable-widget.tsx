@@ -40,6 +40,8 @@ export function SortableWidget({ widget }: { widget: WidgetConfig }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
+      role="group"
+      aria-label={widget.id}
       onClick={handleClick}
       className={cn(
         "group relative min-w-0 rounded-lg",

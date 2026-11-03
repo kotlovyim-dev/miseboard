@@ -4,6 +4,7 @@ import { createDatabase } from "../client";
 import { runMigrations } from "../migrate";
 import { apps, inventoryItems, orders, venues } from "../schema";
 import { resetDemo } from "./reset";
+import { restaurantOps } from "./restaurant-ops";
 import { seedDatabase, seedIfEmpty } from "./seed";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -74,6 +75,18 @@ describe("seedIfEmpty", () => {
 
     expect(await db.$count(venues)).toBe(3);
     expect(await db.$count(apps, eq(apps.isTemplate, true))).toBe(1);
+  });
+});
+
+describe("seedIfEmpty template refresh", () => {
+  it("replaces an outdated template config on the next boot", async () => {
+    await seedIfEmpty(db, now);
+    await db.update(apps).set({ config: {} }).where(eq(apps.slug, "restaurant-ops"));
+
+    await seedIfEmpty(db, now);
+
+    const [template] = await db.select().from(apps).where(eq(apps.slug, "restaurant-ops"));
+    expect(template?.config).toEqual(restaurantOps.config);
   });
 });
 

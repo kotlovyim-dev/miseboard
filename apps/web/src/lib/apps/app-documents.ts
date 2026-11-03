@@ -63,3 +63,9 @@ export const DeleteAppMutation = graphql(`
     deleteApp(id: $id)
   }
 `);
+
+export const ResetDemoMutation = graphql(`
+  mutation ResetDemo {
+    resetDemo
+  }
+`);

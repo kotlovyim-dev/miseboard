@@ -10,7 +10,11 @@ const scope = {
 describe("findCompletions", () => {
   it("suggests node ids right after the opening braces", () => {
     const result = findCompletions("{{ ", 3, scope);
-    expect(result?.items.map((item) => item.label)).toEqual(["stat1", "venuesQuery", "venuesTable"]);
+    expect(result?.items.map((item) => item.label)).toEqual([
+      "stat1",
+      "venuesQuery",
+      "venuesTable",
+    ]);
     expect(result?.from).toBe(3);
   });
 

@@ -9,6 +9,7 @@ services:
       - "443:443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:?}
+      ALLOWED_HOST: ${SITE_ADDRESS}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -55,6 +56,20 @@ services:
       db:
         condition: service_healthy
 
+  cron:
+    build:
+      context: infra/cron
+      additional_contexts:
+        api: service:api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-miseboard}:${POSTGRES_PASSWORD:?}@db:5432/${POSTGRES_DB:-miseboard}
+    volumes:
+      - backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: postgres:17-alpine
     restart: unless-stopped
@@ -72,5 +87,6 @@ services:
 
 volumes:
   db_data:
+  backups:
   caddy_data:
   caddy_config:

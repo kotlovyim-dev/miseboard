@@ -11,11 +11,11 @@ const externalNpmPackages = {
 };
 
 await build({
-  entryPoints: ["src/main.ts"],
+  entryPoints: ["src/main.ts", "src/reset.ts"],
   bundle: true,
   platform: "node",
   format: "esm",
-  outfile: "dist/main.js",
+  outdir: "dist",
   plugins: [externalNpmPackages],
 });
 

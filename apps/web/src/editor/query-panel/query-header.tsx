@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { Play, Trash2 } from "lucide-react";
 import type { QueryConfig } from "@miseboard/config";
 import { Button } from "@/components/ui/button";
 import { NodeIdField } from "@/editor/inspector/node-id-field";
@@ -8,12 +8,21 @@ import { useEditorStore } from "@/editor/store/editor-store";
 import { KindBadge } from "./kind-badge";
 import { useDeleteQuery } from "./use-delete-query";
 
+const REASON_ID = "run-blocked-reason";
+
 const TRIGGERS: { value: QueryConfig["trigger"]; label: string }[] = [
   { value: "onLoad", label: "On load" },
   { value: "manual", label: "Manual" },
 ];
 
-export function QueryHeader({ query }: { query: QueryConfig }) {
+interface QueryHeaderProps {
+  query: QueryConfig;
+  isRunning: boolean;
+  blockedReason: string | null;
+  onRun: () => void;
+}
+
+export function QueryHeader({ query, isRunning, blockedReason, onRun }: QueryHeaderProps) {
   const updateQuery = useEditorStore((state) => state.updateQuery);
   const deleteQuery = useDeleteQuery();
 
@@ -35,11 +44,27 @@ export function QueryHeader({ query }: { query: QueryConfig }) {
           </option>
         ))}
       </select>
+      {blockedReason && (
+        <span id={REASON_ID} className="ml-auto text-xs text-muted-foreground">
+          {blockedReason}
+        </span>
+      )}
+      <Button
+        type="button"
+        size="sm"
+        className={blockedReason ? undefined : "ml-auto"}
+        disabled={blockedReason !== null || isRunning}
+        aria-describedby={blockedReason ? REASON_ID : undefined}
+        onClick={onRun}
+      >
+        <Play aria-hidden strokeWidth={1.5} />
+        {isRunning ? "Running" : "Run query"}
+        <kbd className="font-sans text-xs opacity-80">⌘↵</kbd>
+      </Button>
       <Button
         type="button"
         variant="ghost"
         size="icon-sm"
-        className="ml-auto"
         aria-label={`Delete ${query.id}`}
         onClick={() => deleteQuery(query)}
       >

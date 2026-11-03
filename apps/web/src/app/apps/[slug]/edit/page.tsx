@@ -6,5 +6,5 @@ export default async function EditAppPage({ params }: PageProps<"/apps/[slug]/ed
   const { slug } = await params;
   if (slug !== DEMO_SLUG) notFound();
 
-  return <EditorShell appName={demoApp.name} config={demoApp.config} />;
+  return <EditorShell slug={slug} appName={demoApp.name} config={demoApp.config} />;
 }

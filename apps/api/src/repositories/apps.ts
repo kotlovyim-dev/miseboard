@@ -1,6 +1,7 @@
-import { desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray, like } from "drizzle-orm";
 import { apps } from "@miseboard/db";
 import type { Database } from "@miseboard/db";
+import { pickFreeSlug } from "../slug";
 
 export function listApps(db: Database) {
   return db.select().from(apps).orderBy(apps.isTemplate, desc(apps.updatedAt));
@@ -12,5 +13,24 @@ export function findAppsByIds(db: Database, ids: string[]) {
 
 export async function findAppBySlug(db: Database, slug: string) {
   const [app] = await db.select().from(apps).where(eq(apps.slug, slug));
+  return app;
+}
+
+export async function findTemplate(db: Database) {
+  const [template] = await db.select().from(apps).where(eq(apps.isTemplate, true)).limit(1);
+  return template;
+}
+
+export async function insertApp(db: Database, name: string, baseSlug: string, config: unknown) {
+  const slugs = await db
+    .select({ slug: apps.slug })
+    .from(apps)
+    .where(like(apps.slug, `${baseSlug}%`));
+  const slug = pickFreeSlug(
+    baseSlug,
+    slugs.map((row) => row.slug),
+  );
+  const [app] = await db.insert(apps).values({ name, slug, config }).returning();
+  if (!app) throw new Error("Inserting the app returned no row");
   return app;
 }

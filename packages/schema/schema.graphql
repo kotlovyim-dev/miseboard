@@ -27,6 +27,7 @@ type MenuItem implements Node {
 }
 
 type Mutation {
+  adjustInventory(delta: Float!, id: ID!): InventoryItem!
   updateOrderStatus(id: ID!, status: OrderStatus!): Order!
 }
 

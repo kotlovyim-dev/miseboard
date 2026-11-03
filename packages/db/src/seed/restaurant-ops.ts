@@ -7,8 +7,8 @@ const VENUES_DOCUMENT = `query Venues {
   }
 }`;
 
-const REVENUE_DOCUMENT = `query RevenueToday($venueId: ID!, $from: DateTime!, $to: DateTime!) {
-  venue(id: $venueId) {
+const REVENUE_DOCUMENT = `query RevenueToday($from: DateTime!, $to: DateTime!) {
+  venues {
     id
     revenue(from: $from, to: $to) {
       total
@@ -30,8 +30,8 @@ const ORDERS_DOCUMENT = `query VenueOrders($venueId: ID) {
   }
 }`;
 
-const LOW_STOCK_DOCUMENT = `query LowStock($venueId: ID!) {
-  venue(id: $venueId) {
+const LOW_STOCK_DOCUMENT = `query LowStock {
+  venues {
     id
     inventory(lowStockOnly: true) {
       id
@@ -60,6 +60,9 @@ const RESTOCK_DOCUMENT = `mutation Restock($id: ID!, $delta: Float!) {
 }`;
 
 const venueVariables = { venueId: "{{ venueSelect.value }}" };
+const selectedVenue = (query: string) =>
+  `filter(${query}.data.venues ?? [], "id", venueSelect.value)[0]`;
+const lowStockItems = `filter(${selectedVenue("lowStockQuery")}.inventory ?? [], "isLow", true)`;
 
 const parsed = parseAppConfig({
   version: 1,
@@ -69,15 +72,10 @@ const parsed = parseAppConfig({
       id: "revenueQuery",
       kind: "query",
       document: REVENUE_DOCUMENT,
-      variables: { ...venueVariables, from: "{{ today() }}", to: "{{ daysAgo(-1) }}" },
+      variables: { from: "{{ today() }}", to: "{{ daysAgo(-1) }}" },
     },
     { id: "ordersQuery", kind: "query", document: ORDERS_DOCUMENT, variables: venueVariables },
-    {
-      id: "lowStockQuery",
-      kind: "query",
-      document: LOW_STOCK_DOCUMENT,
-      variables: venueVariables,
-    },
+    { id: "lowStockQuery", kind: "query", document: LOW_STOCK_DOCUMENT },
     { id: "markReady", kind: "mutation", document: MARK_READY_DOCUMENT, trigger: "manual" },
     { id: "restock", kind: "mutation", document: RESTOCK_DOCUMENT, trigger: "manual" },
   ],
@@ -105,7 +103,7 @@ const parsed = parseAppConfig({
       width: 4,
       props: {
         label: "Revenue today",
-        value: '{{ sum(revenueQuery.data.venue.revenue ?? [], "total") }}',
+        value: `{{ sum(${selectedVenue("revenueQuery")}.revenue ?? [], "total") }}`,
         format: "uah",
       },
     },
@@ -115,7 +113,7 @@ const parsed = parseAppConfig({
       width: 4,
       props: {
         label: "Orders today",
-        value: '{{ sum(revenueQuery.data.venue.revenue ?? [], "orders") }}',
+        value: `{{ sum(${selectedVenue("revenueQuery")}.revenue ?? [], "orders") }}`,
         format: "number",
       },
     },
@@ -125,7 +123,7 @@ const parsed = parseAppConfig({
       width: 4,
       props: {
         label: "Low stock items",
-        value: "{{ len(lowStockQuery.data.venue.inventory ?? []) }}",
+        value: `{{ len(${lowStockItems}) }}`,
         format: "number",
       },
     },
@@ -153,7 +151,7 @@ const parsed = parseAppConfig({
       type: "table",
       width: 12,
       props: {
-        data: "{{ lowStockQuery.data.venue.inventory ?? [] }}",
+        data: `{{ ${lowStockItems} }}`,
         pageSize: 10,
         columns: [
           { key: "name", label: "Item" },

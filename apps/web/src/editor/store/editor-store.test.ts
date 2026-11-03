@@ -47,8 +47,16 @@ describe("widget actions", () => {
     expect(added?.type === "table" && added.props.data).toBe("{{ ordersQuery.data }}");
   });
 
-  it("ignores widget types without a definition", () => {
+  it("adds a select bound to the first query", () => {
+    store.getState().setConfig(demoApp.config);
     store.getState().addWidget("select");
+
+    const added = store.getState().config.widgets.at(-1);
+    expect(added?.type === "select" && added.props.options).toBe("{{ ordersQuery.data }}");
+  });
+
+  it("ignores widget types without a definition", () => {
+    store.getState().addWidget("form");
 
     expect(widgetIds()).toEqual([]);
   });

@@ -29,7 +29,10 @@ export function EditorShell({ app }: { app: LoadedApp }) {
   const setConfig = useEditorStore((state) => state.setConfig);
   const autosave = useAutosave(app);
 
-  useEffect(() => setConfig(config), [config, setConfig]);
+  useEffect(() => {
+    setConfig(config);
+    useEditorStore.temporal.getState().clear();
+  }, [config, setConfig]);
 
   useEffect(() => {
     if (canEdit) return;

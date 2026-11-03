@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { AppConfig, EMPTY_APP_CONFIG, type WidgetType } from "@miseboard/config";
 import { demoApp } from "@/runtime/demo-app";
-import { useEditorStore } from "./editor-store";
+import { HISTORY_LIMIT, useEditorStore } from "./editor-store";
 import { nextId } from "./next-id";
 import { validateNodeId } from "./validate-node-id";
 
@@ -186,5 +186,30 @@ describe("selection and ui", () => {
       mode: "preview",
       pendingDeleteId: "table1",
     });
+  });
+});
+
+describe("history", () => {
+  const history = () => store.temporal.getState();
+  beforeEach(() => history().clear());
+
+  it("undoes and redoes config changes", () => {
+    store.getState().addWidget("table");
+    history().undo();
+    expect(widgetIds()).toEqual([]);
+    history().redo();
+    expect(widgetIds()).toEqual(["table1"]);
+  });
+
+  it("does not record selection changes", () => {
+    store.getState().addWidget("table");
+    history().clear();
+    store.getState().selectNode(null);
+    expect(history().pastStates).toHaveLength(0);
+  });
+
+  it("keeps at most the history limit", () => {
+    for (let count = 0; count <= HISTORY_LIMIT + 5; count++) store.getState().addWidget("text");
+    expect(history().pastStates).toHaveLength(HISTORY_LIMIT);
   });
 });

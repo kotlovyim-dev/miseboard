@@ -4,6 +4,8 @@ import { Dialog } from "radix-ui";
 
 const SHORTCUTS = [
   { keys: "Ctrl/Cmd + K", description: "Open the command palette" },
+  { keys: "Ctrl/Cmd + Z", description: "Undo" },
+  { keys: "Shift + Ctrl/Cmd + Z", description: "Redo" },
   { keys: "Ctrl/Cmd + D", description: "Duplicate the selected widget" },
   { keys: "Delete", description: "Delete the selected widget" },
   { keys: "Esc", description: "Deselect" },

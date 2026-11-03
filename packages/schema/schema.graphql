@@ -26,6 +26,10 @@ type MenuItem implements Node {
   price: Int!
 }
 
+type Mutation {
+  updateOrderStatus(id: ID!, status: OrderStatus!): Order!
+}
+
 interface Node {
   id: ID!
 }

@@ -5,6 +5,7 @@ import "./venue";
 import "./menu-item";
 import "./inventory-item";
 import "./order-connection";
+import "./update-order-status";
 import "./revenue-point";
 
 const RoleEnum = builder.enumType("Role", { values: roles });
@@ -25,5 +26,7 @@ builder.queryType({
     }),
   }),
 });
+
+builder.mutationType({});
 
 export const schema = builder.toSchema();

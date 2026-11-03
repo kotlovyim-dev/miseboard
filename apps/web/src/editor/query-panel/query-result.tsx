@@ -2,6 +2,7 @@ import { CircleAlert } from "lucide-react";
 import { IdChip } from "@/components/id-chip";
 import { isEmptyResult } from "./is-empty-result";
 import { JsonTree } from "./json-tree";
+import { describeVariables } from "@/runtime/describe-variables";
 import type { RunResult } from "@/runtime/query-runner";
 
 interface QueryResultProps {
@@ -60,7 +61,7 @@ function EmptyNotice({
   return (
     <p className="text-sm text-muted-foreground">
       <IdChip id={queryId} /> returned no rows
-      {hasVariables ? ` for ${JSON.stringify(variables)}` : " and has no variables"}.
+      {hasVariables ? ` for ${describeVariables(variables)}` : " and has no variables"}.
     </p>
   );
 }

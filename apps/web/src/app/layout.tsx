@@ -18,7 +18,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${geist.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${geist.variable} ${geistMono.variable}`}
+    >
       <body>
         <Providers role={await fetchRole()}>{children}</Providers>
       </body>

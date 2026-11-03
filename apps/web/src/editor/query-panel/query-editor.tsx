@@ -8,6 +8,7 @@ import { validateDocument } from "@/lib/schema/validate-document";
 import { DocumentEditor } from "./document-editor";
 import { IssueList } from "./issue-list";
 import { QueryHeader } from "./query-header";
+import { VariablesEditor } from "./variables-editor";
 
 export function QueryEditor({ query }: { query: QueryConfig }) {
   const updateQuery = useEditorStore((state) => state.updateQuery);
@@ -29,6 +30,7 @@ export function QueryEditor({ query }: { query: QueryConfig }) {
             Couldn&apos;t load the schema, so only syntax is checked. Reload to try again.
           </p>
         )}
+        <VariablesEditor query={query} />
       </div>
     </div>
   );

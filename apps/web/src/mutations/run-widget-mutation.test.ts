@@ -12,9 +12,14 @@ const markReady: QueryConfig = {
   trigger: "manual",
 };
 
+const emptyCache: MutationClient["cache"] = {
+  identify: () => undefined,
+  readFragment: () => null,
+};
+
 function setup() {
   const mutate = vi.fn(() => Promise.resolve({ data: { updateOrderStatus: { id: "o1" } } }));
-  const client: MutationClient = { mutate };
+  const client: MutationClient = { mutate, cache: emptyCache };
   return { mutate, client };
 }
 
@@ -29,7 +34,7 @@ describe("runWidgetMutation", () => {
       local: { row: { id: "o1" } },
     });
 
-    expect(outcome).toEqual({ ok: true, data: { updateOrderStatus: { id: "o1" } } });
+    expect(outcome).toMatchObject({ ok: true, data: { updateOrderStatus: { id: "o1" } } });
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({ variables: { id: "o1", status: "READY" } }),
     );
@@ -79,7 +84,10 @@ describe("runWidgetMutation", () => {
   });
 
   it("reports a server error", async () => {
-    const client: MutationClient = { mutate: () => Promise.reject(new Error("FORBIDDEN")) };
+    const client: MutationClient = {
+      mutate: () => Promise.reject(new Error("FORBIDDEN")),
+      cache: emptyCache,
+    };
 
     const outcome = await runWidgetMutation(client, [markReady], {
       mutationId: "markReady",

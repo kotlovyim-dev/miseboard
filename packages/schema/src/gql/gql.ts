@@ -16,10 +16,14 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
 type Documents = {
     "\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n": typeof types.VenueCountDocument,
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": typeof types.OrderStatusValueFragmentDoc,
+    "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": typeof types.ViewerDocument,
+    "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": typeof types.SetRoleDocument,
 };
 const documents: Documents = {
     "\n  query VenueCount {\n    venues {\n      id\n    }\n  }\n": types.VenueCountDocument,
     "\n  fragment OrderStatusValue on Order {\n    status\n  }\n": types.OrderStatusValueFragmentDoc,
+    "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n": types.ViewerDocument,
+    "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n": types.SetRoleDocument,
 };
 
 /**
@@ -44,6 +48,14 @@ export function graphql(source: "\n  query VenueCount {\n    venues {\n      id\
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment OrderStatusValue on Order {\n    status\n  }\n"): (typeof documents)["\n  fragment OrderStatusValue on Order {\n    status\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n"): (typeof documents)["\n  query Viewer {\n    viewer {\n      role\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n"): (typeof documents)["\n  mutation SetRole($role: Role!) {\n    setRole(role: $role) {\n      role\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

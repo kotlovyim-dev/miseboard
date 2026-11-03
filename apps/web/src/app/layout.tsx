@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { fetchRole } from "@/lib/role/fetch-role";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -15,11 +16,11 @@ export const metadata: Metadata = {
   title: "MiseBoard",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${geist.variable} ${geistMono.variable}`}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers role={await fetchRole()}>{children}</Providers>
       </body>
     </html>
   );

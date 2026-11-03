@@ -1,5 +1,5 @@
 FROM caddy:2-builder AS caddy
-RUN xcaddy build --with github.com/mholt/caddy-ratelimit
+RUN XCADDY_SETCAP=0 xcaddy build --with github.com/mholt/caddy-ratelimit
 
 FROM node:24-alpine AS base
 RUN corepack enable

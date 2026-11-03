@@ -14,11 +14,11 @@ import { readOptions } from "./select-options";
 export function SelectWidget({ id, props, state, setState }: WidgetComponentProps) {
   const options = readOptions(id, props);
   const value = typeof state.value === "string" ? state.value : "";
-  const defaultValue = readDefault(props.default);
+  const defaultOption = options.find((option) => option.value === readDefault(props.default));
 
   useEffect(() => {
-    if (state.value === null && defaultValue !== null) setState({ ...state, value: defaultValue });
-  }, [state, defaultValue, setState]);
+    if (state.value === null && defaultOption) setState({ ...state, value: defaultOption.value });
+  }, [state, defaultOption, setState]);
 
   return (
     <Select

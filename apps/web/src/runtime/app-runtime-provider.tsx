@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import type { AppConfigData } from "@miseboard/config";
 import { widgetRegistry } from "@/widgets/registry";
 import { connectEngine } from "./connect-engine";
-import { createRuntime } from "./create-runtime";
+import { buildEngine, createRuntime, syncRuntime } from "./create-runtime";
 import { startQueryRunner } from "./query-runner";
 import type { QueryRunner } from "./query-runner";
 import { RuntimeContext } from "./runtime-context";
@@ -18,27 +18,30 @@ interface AppRuntimeProviderProps {
 
 export function AppRuntimeProvider({ config, role, children }: AppRuntimeProviderProps) {
   const client = useApolloClient();
-  const runtime = useMemo(() => createRuntime(config, role, widgetRegistry), [config, role]);
+  const [{ store }] = useState(() => createRuntime(config, role, widgetRegistry));
+  const engine = useMemo(() => buildEngine(config, widgetRegistry), [config]);
+  const { queries } = config;
   const runnerRef = useRef<QueryRunner | null>(null);
 
   useEffect(() => {
-    const stopEngine = connectEngine(runtime.store, runtime.engine);
-    const runner = startQueryRunner(client, config.queries, runtime.store);
+    syncRuntime(store, engine, config, role, widgetRegistry);
+    return connectEngine(store, engine);
+  }, [store, engine, config, role]);
+
+  useEffect(() => {
+    const runner = startQueryRunner(client, queries, store);
     runnerRef.current = runner;
-    return () => {
-      runner.stop();
-      stopEngine();
-    };
-  }, [client, config, runtime]);
+    return runner.stop;
+  }, [client, queries, store]);
 
   const value = useMemo(
     () => ({
-      store: runtime.store,
-      engine: runtime.engine,
+      store,
+      engine,
       config,
       retryQuery: (queryId: string) => runnerRef.current?.retry(queryId),
     }),
-    [runtime, config],
+    [store, engine, config],
   );
 
   return <RuntimeContext.Provider value={value}>{children}</RuntimeContext.Provider>;

@@ -7,7 +7,7 @@ export function CtaSection() {
   return (
     <LandingSection
       headingId="cta-heading"
-      className="flex min-h-[90svh] flex-col items-center justify-between bg-highlighter text-center text-highlighter-foreground md:py-16"
+      className="flex flex-col gap-16 lg:min-h-[90svh] items-center justify-between bg-highlighter text-center text-highlighter-foreground md:py-16"
     >
       <Reveal>
         <h2
@@ -17,7 +17,7 @@ export function CtaSection() {
           Try the demo or read the code?
         </h2>
       </Reveal>
-      <Reveal delay={120} className="my-16 flex flex-col items-center gap-5 md:flex-row md:gap-12">
+      <Reveal delay={120} className="flex flex-col items-center gap-5 md:flex-row md:gap-12">
         <LandingButton href={DEMO_HREF} variant="ink" className="w-72 md:w-52">
           Open the demo
         </LandingButton>

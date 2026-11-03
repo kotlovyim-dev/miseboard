@@ -31,7 +31,7 @@ export function LandingFooter() {
           ))}
         </ul>
       </div>
-      <div className="mt-24 space-y-1 text-[13px] md:mt-40">
+      <div className="mt-20 space-y-1 text-[13px] md:mt-28">
         <p>Mise is a portfolio project. The data is fictional.</p>
         <p>
           Pictures, all public domain via Wikimedia Commons:{" "}

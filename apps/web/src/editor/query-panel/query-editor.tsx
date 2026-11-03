@@ -9,6 +9,7 @@ import { DocumentEditor } from "./document-editor";
 import { IssueList } from "./issue-list";
 import { QueryHeader } from "./query-header";
 import { QueryResult } from "./query-result";
+import { TransformerEditor } from "./transformer-editor";
 import { useRunQuery } from "./use-run-query";
 import { VariablesEditor } from "./variables-editor";
 
@@ -49,6 +50,7 @@ export function QueryEditor({ query }: { query: QueryConfig }) {
             </p>
           )}
           <VariablesEditor query={query} />
+          <TransformerEditor query={query} />
         </div>
         <div className="min-h-0 overflow-auto">
           <QueryResult queryId={query.id} result={result} isRunning={isRunning} />

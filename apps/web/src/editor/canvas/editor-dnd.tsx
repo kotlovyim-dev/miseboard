@@ -12,6 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useReducedMotion } from "motion/react";
+import type { WidgetType } from "@miseboard/config";
 import { useState } from "react";
 import { useEditorStore } from "@/editor/store/editor-store";
 import { resolveDrop } from "./drop-action";
@@ -21,6 +22,7 @@ const DRAG_START_DISTANCE_PX = 6;
 export function EditorDnd({ children }: { children: React.ReactNode }) {
   const widgets = useEditorStore((state) => state.config.widgets);
   const moveWidget = useEditorStore((state) => state.moveWidget);
+  const addWidget = useEditorStore((state) => state.addWidget);
   const shouldReduceMotion = useReducedMotion();
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
   const sensors = useSensors(
@@ -38,8 +40,10 @@ export function EditorDnd({ children }: { children: React.ReactNode }) {
       widgets.map((widget) => widget.id),
       String(active.id),
       over ? String(over.id) : null,
+      active.data.current?.paletteType as WidgetType | undefined,
     );
-    if (action) moveWidget(action.from, action.to);
+    if (action?.kind === "move") moveWidget(action.from, action.to);
+    if (action?.kind === "add") addWidget(action.type, action.index);
   };
 
   return (

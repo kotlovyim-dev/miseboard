@@ -1,9 +1,17 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { RoleSwitcher } from "@/components/role-switcher";
+import { SaveStatus } from "@/components/save-status";
+import type { SaveStatus as Status } from "@/editor/persistence/autosave";
 import { ModeToggle } from "./mode-toggle";
 
-export function EditorTopBar({ appName }: { appName: string }) {
+interface EditorTopBarProps {
+  appName: string;
+  saveStatus: Status;
+  onRetry: () => void;
+}
+
+export function EditorTopBar({ appName, saveStatus, onRetry }: EditorTopBarProps) {
   return (
     <header className="grid h-10 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-border px-3">
       <div className="flex min-w-0 items-center gap-2">
@@ -17,7 +25,8 @@ export function EditorTopBar({ appName }: { appName: string }) {
         <h1 className="truncate font-display text-sm font-semibold">{appName}</h1>
       </div>
       <ModeToggle />
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        <SaveStatus status={saveStatus} onRetry={onRetry} />
         <RoleSwitcher />
       </div>
     </header>

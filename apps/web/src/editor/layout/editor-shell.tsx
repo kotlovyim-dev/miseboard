@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAutosave } from "@/editor/persistence/use-autosave";
 import { useEditorStore } from "@/editor/store/editor-store";
 import type { LoadedApp } from "@/lib/apps/load-app";
 import { useRole } from "@/lib/role/use-role";
@@ -24,6 +25,7 @@ export function EditorShell({ app }: { app: LoadedApp }) {
   const { canEdit } = useRole();
   const mode = useEditorStore((state) => state.mode);
   const setConfig = useEditorStore((state) => state.setConfig);
+  const autosave = useAutosave(app);
 
   useEffect(() => setConfig(config), [config, setConfig]);
 
@@ -37,7 +39,7 @@ export function EditorShell({ app }: { app: LoadedApp }) {
 
   return (
     <div className="flex h-dvh flex-col">
-      <EditorTopBar appName={name} />
+      <EditorTopBar appName={name} saveStatus={autosave.status} onRetry={autosave.retry} />
       {mode === "edit" && <DesktopNotice />}
       <div className="min-h-0 flex-1">{mode === "edit" ? <EditorPanels /> : <PreviewPane />}</div>
     </div>

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { QueryConfig } from "@miseboard/config";
 import type { Evaluations } from "@miseboard/engine";
 import { createRuntimeStore } from "./runtime-store";
-import { startQueryRunner } from "./query-runner";
+import { createQueryRunner } from "./query-runner";
 import type { QueryClient, WatchedQueryResult } from "./query-runner";
 
 const ordersQuery: QueryConfig = {
@@ -34,11 +34,12 @@ function setup(queries: QueryConfig[]) {
     refetch,
   }));
   const client: QueryClient = { watchQuery };
-  const runner = startQueryRunner(client, queries, store);
+  const runner = createQueryRunner(client, store);
+  runner.sync(queries);
   return { store, watchQuery, refetch, runner, emit: (result: WatchedQueryResult) => emit(result) };
 }
 
-describe("startQueryRunner", () => {
+describe("createQueryRunner", () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
@@ -94,5 +95,45 @@ describe("startQueryRunner", () => {
     ]);
 
     expect(watchQuery).not.toHaveBeenCalled();
+  });
+
+  it("keeps the subscription when an unrelated config edit syncs the same queries", () => {
+    const { watchQuery, refetch, runner } = setup([ordersQuery]);
+
+    runner.sync([{ ...ordersQuery }]);
+    vi.advanceTimersByTime(250);
+
+    expect(watchQuery).toHaveBeenCalledOnce();
+    expect(refetch).not.toHaveBeenCalled();
+  });
+
+  it("watches the document again once, 250 ms after the last document edit", () => {
+    const { watchQuery, runner } = setup([ordersQuery]);
+
+    runner.sync([
+      {
+        ...ordersQuery,
+        document: "query ($venueId: ID!) { orders(venueId: $venueId) { id status } }",
+      },
+    ]);
+    runner.sync([
+      {
+        ...ordersQuery,
+        document: "query ($venueId: ID!) { orders(venueId: $venueId) { id total } }",
+      },
+    ]);
+    vi.advanceTimersByTime(250);
+
+    expect(watchQuery).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops following a query that was removed or made manual", () => {
+    const { store, refetch, runner } = setup([ordersQuery]);
+
+    runner.sync([{ ...ordersQuery, trigger: "manual" }]);
+    store.getState().mergeEvaluations(evaluateVenue("v2"));
+    vi.advanceTimersByTime(250);
+
+    expect(refetch).not.toHaveBeenCalled();
   });
 });

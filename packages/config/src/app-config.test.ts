@@ -68,6 +68,16 @@ describe("WidgetDef", () => {
     },
   );
 
+  it("keeps the options of a form select field", () => {
+    const field = { name: "item", label: "Item", type: "select", options: "{{ items.data }}" };
+    const parsed = WidgetDef.parse({
+      ...formWidget,
+      props: { ...formWidget.props, fields: [field] },
+    });
+
+    expect(parsed.type === "form" && parsed.props.fields[0]?.options).toBe("{{ items.data }}");
+  });
+
   it("rejects an unknown widget type", () => {
     expect(WidgetDef.safeParse({ ...textWidget, type: "chart" }).success).toBe(false);
   });

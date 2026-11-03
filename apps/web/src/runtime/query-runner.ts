@@ -117,7 +117,7 @@ function startTask(client: QueryClient, query: QueryConfig, store: RuntimeStore)
   };
 }
 
-function readVariables(store: RuntimeStore, queryId: string): Variables {
+export function readVariables(store: RuntimeStore, queryId: string): Variables {
   const evaluation = store.getState().evaluations.get(queryId) ?? {};
   const failed = Object.entries(evaluation).find(([, result]) => !result.ok);
   if (failed) return { ok: false, error: `${failed[0]}: ${describeFailure(failed[1])}` };
@@ -135,7 +135,7 @@ function valueOf(result: EvaluationResult) {
   return result.ok ? result.value : undefined;
 }
 
-function parseDocument(source: string) {
+export function parseDocument(source: string) {
   try {
     return { ok: true, value: gql(source) } as const;
   } catch (error) {

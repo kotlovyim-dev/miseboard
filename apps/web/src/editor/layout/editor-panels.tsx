@@ -6,9 +6,9 @@ import { EditorDnd } from "@/editor/canvas/editor-dnd";
 import { DeleteWidgetDialog } from "@/editor/inspector/delete-widget-dialog";
 import { InspectorPanel } from "@/editor/inspector/inspector-panel";
 import { PalettePanel } from "@/editor/palette/palette-panel";
+import { QueryPanel } from "@/editor/query-panel/query-panel";
 import { useEditorStore } from "@/editor/store/editor-store";
 import { AppRuntimeProvider } from "@/runtime/app-runtime-provider";
-import { EditorPanel } from "./editor-panel";
 import { ResizeHandle } from "./resize-handle";
 
 const SIDE_PANEL_MIN_PX = 180;
@@ -51,7 +51,7 @@ export function EditorPanels({ role }: { role: string }) {
                 collapsible
                 collapsedSize={QUERY_PANEL_COLLAPSED_PX}
               >
-                <EditorPanel title="Queries" hint="Named GraphQL queries and mutations." />
+                <QueryPanel />
               </Panel>
             </Group>
           </Panel>

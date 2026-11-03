@@ -141,6 +141,18 @@ describe("query actions", () => {
     expect(store.getState().config.queries.map((query) => query.id)).toEqual(["query1"]);
     expect(store.getState().activeQueryId).toBeNull();
   });
+
+  it("restores a removed query at its position", () => {
+    store.getState().addQuery();
+    store.getState().addQuery();
+    const [first] = store.getState().config.queries;
+    if (!first) throw new Error("query1 missing");
+    store.getState().removeQuery("query1");
+    store.getState().restoreQuery(first, 0);
+
+    expect(store.getState().config.queries.map((query) => query.id)).toEqual(["query1", "query2"]);
+    expect(store.getState().activeQueryId).toBe("query1");
+  });
 });
 
 describe("selection and ui", () => {

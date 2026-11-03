@@ -27,6 +27,7 @@ export interface ConfigSlice {
   addQuery: () => void;
   updateQuery: (id: string, changes: Partial<Omit<QueryConfig, "id">>) => void;
   removeQuery: (id: string) => void;
+  restoreQuery: (query: QueryConfig, index: number) => void;
 }
 
 export const createConfigSlice: StateCreator<EditorState, [], [], ConfigSlice> = (set, get) => {
@@ -106,6 +107,12 @@ export const createConfigSlice: StateCreator<EditorState, [], [], ConfigSlice> =
     removeQuery: (id) => {
       changeConfig({ queries: get().config.queries.filter((query) => query.id !== id) });
       if (get().activeQueryId === id) set({ activeQueryId: null });
+    },
+    restoreQuery: (query, index) => {
+      const queries = [...get().config.queries];
+      queries.splice(index, 0, query);
+      changeConfig({ queries });
+      set({ activeQueryId: query.id });
     },
   };
 };

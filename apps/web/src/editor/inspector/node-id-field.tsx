@@ -47,7 +47,7 @@ export function NodeIdField({ id }: { id: string }) {
     <div className="min-w-0 flex-1 space-y-1">
       <Input
         autoFocus
-        aria-label="Widget id"
+        aria-label="Id"
         aria-invalid={error !== null}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}

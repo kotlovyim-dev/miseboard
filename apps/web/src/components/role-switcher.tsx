@@ -8,7 +8,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRole } from "@/lib/role/use-role";
-import { ROLES, useSwitchRole } from "@/lib/role/use-switch-role";
+import { ROLES } from "@/lib/role/roles";
+import { useSwitchRole } from "@/lib/role/use-switch-role";
 
 export function RoleSwitcher() {
   const { role } = useRole();

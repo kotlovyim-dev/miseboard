@@ -1,0 +1,57 @@
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landing-shutter {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes landing-settle {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.landing-rise {
+  animation: landing-rise 700ms var(--ease-out) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+.landing-shutter {
+  animation: landing-shutter 1100ms var(--ease-out) 250ms both;
+}
+
+.landing-shutter > * {
+  animation: landing-settle 1100ms var(--ease-out) 250ms both;
+}
+
+.landing-ui {
+  font-family: var(--font-sans);
+  font-variation-settings: normal;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+
+[data-ui] .landing-code {
+  font-family: var(--font-mono);
+}
+
+[data-ui] .landing-float {
+  box-shadow: 0 10px 28px color-mix(in oklab, var(--ink) 16%, transparent);
+}

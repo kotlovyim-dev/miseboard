@@ -13,7 +13,7 @@ export function StatWidget({ id, props }: WidgetComponentProps) {
   return (
     <div className="space-y-1">
       <p className="text-sm text-muted-foreground">{String(label ?? "")}</p>
-      <p className="font-display text-3xl font-semibold tabular-nums">
+      <p className="font-display text-5xl tabular-nums">
         {formatStatValue(value, readFormat(format))}
       </p>
       {typeof trend === "number" && <Trend trend={trend} />}

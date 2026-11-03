@@ -24,7 +24,7 @@ export function ReferenceChips({ source }: { source: string }) {
           onMouseLeave={() => setHoveredReference(null)}
           onFocus={() => setHoveredReference(id)}
           onBlur={() => setHoveredReference(null)}
-          className="rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="rounded-sm outline-none hover:*:border-highlighter hover:*:bg-highlighter hover:*:text-highlighter-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:*:border-highlighter focus-visible:*:bg-highlighter focus-visible:*:text-highlighter-foreground"
         >
           <IdChip id={id} />
         </li>

@@ -3,8 +3,8 @@ import type { WidgetComponentProps } from "../types";
 
 const MARKDOWN_STYLES = [
   "space-y-2 text-sm",
-  "[&_h2]:font-display [&_h2]:text-xl [&_h2]:font-semibold",
-  "[&_h3]:font-display [&_h3]:text-base [&_h3]:font-semibold",
+  "[&_h2]:font-display [&_h2]:text-2xl",
+  "[&_h3]:text-base [&_h3]:font-semibold",
   "[&_h4]:font-semibold",
   "[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5",
   "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4",

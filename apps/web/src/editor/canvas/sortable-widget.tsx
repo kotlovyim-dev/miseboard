@@ -48,7 +48,7 @@ export function SortableWidget({ widget }: { widget: WidgetConfig }) {
         "group relative min-w-0 rounded-lg",
         COLUMN_SPAN[widget.width],
         isSelected && "ring-2 ring-ring ring-offset-2 ring-offset-surface",
-        isReferenced && !isSelected && "ring-2 ring-primary/60 ring-offset-2 ring-offset-surface",
+        isReferenced && !isSelected && "ring-4 ring-highlighter outline-1 outline-offset-4",
         isDragging && "opacity-40",
       )}
     >
@@ -70,7 +70,8 @@ export function SortableWidget({ widget }: { widget: WidgetConfig }) {
         id={widget.id}
         className={cn(
           "absolute -top-2.5 left-2 hidden bg-card group-hover:inline-flex",
-          (isSelected || isReferenced) && "inline-flex",
+          (isSelected || isReferenced) &&
+            "inline-flex border-highlighter bg-highlighter text-highlighter-foreground",
         )}
       />
     </div>

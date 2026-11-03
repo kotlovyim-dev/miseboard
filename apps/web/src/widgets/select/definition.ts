@@ -13,12 +13,16 @@ export const selectDefinition: WidgetDefinition<SelectProps> = {
     labelKey: "name",
     valueKey: "id",
   }),
-  templatedFields: ({ options }) => ({ options }),
+  templatedFields: ({ options, default: defaultValue }) => ({
+    options,
+    ...(defaultValue === undefined ? {} : { default: defaultValue }),
+  }),
   initialState: () => ({ value: null }),
   inspectorFields: [
     { kind: "template", name: "options", label: "Options" },
     { kind: "text", name: "labelKey", label: "Label key" },
     { kind: "text", name: "valueKey", label: "Value key" },
+    { kind: "template", name: "default", label: "Default" },
   ],
   Component: SelectWidget,
   Skeleton: SelectSkeleton,

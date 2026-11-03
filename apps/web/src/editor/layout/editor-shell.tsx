@@ -30,7 +30,7 @@ export function EditorShell({ appName, config, role }: EditorShellProps) {
       <EditorTopBar appName={appName} />
       {mode === "edit" && <DesktopNotice />}
       <div className="min-h-0 flex-1">
-        {mode === "edit" ? <EditorPanels /> : <PreviewPane role={role} />}
+        {mode === "edit" ? <EditorPanels role={role} /> : <PreviewPane role={role} />}
       </div>
     </div>
   );

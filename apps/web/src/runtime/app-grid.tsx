@@ -4,7 +4,7 @@ import type { WidgetWidth } from "@miseboard/config";
 import { useRuntime } from "./runtime-context";
 import { WidgetRenderer } from "./widget-renderer";
 
-const COLUMN_SPAN: Record<WidgetWidth, string> = {
+export const COLUMN_SPAN: Record<WidgetWidth, string> = {
   3: "md:col-span-3",
   4: "md:col-span-4",
   6: "md:col-span-6",

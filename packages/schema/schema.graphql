@@ -26,6 +26,12 @@ type MenuItem implements Node {
   price: Int!
 }
 
+type Mutation {
+  adjustInventory(delta: Float!, id: ID!): InventoryItem!
+  updateMenuItem(input: UpdateMenuItemInput!): MenuItem!
+  updateOrderStatus(id: ID!, status: OrderStatus!): Order!
+}
+
 interface Node {
   id: ID!
 }
@@ -91,6 +97,17 @@ enum Role {
   ADMIN
   MANAGER
   VIEWER
+}
+
+type Subscription {
+  orderUpdated(venueId: ID): Order!
+}
+
+input UpdateMenuItemInput {
+  id: ID!
+  isActive: Boolean
+  name: String
+  price: Int
 }
 
 type Venue implements Node {

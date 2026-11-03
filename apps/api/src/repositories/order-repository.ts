@@ -31,6 +31,11 @@ export function findOrdersByIds(db: Database, ids: string[]) {
   return db.select().from(orders).where(inArray(orders.id, ids));
 }
 
+export async function updateOrderStatus(db: Database, id: string, status: OrderStatus) {
+  const [order] = await db.update(orders).set({ status }).where(eq(orders.id, id)).returning();
+  return order;
+}
+
 export async function findOrderItemsByOrderIds(db: Database, orderIds: string[]) {
   const rows = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds));
   return orderIds.map((orderId) => rows.filter((row) => row.orderId === orderId));

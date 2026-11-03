@@ -6,6 +6,7 @@ import type { EvaluationResult } from "@miseboard/engine";
 import { Input } from "@/components/ui/input";
 import { useRuntimeStore } from "@/runtime/runtime-context";
 import type { FieldEditorProps, FieldOfKind } from "./field-editor-props";
+import { ReferenceChips } from "./reference-chips";
 import { describeValue, findErrorSpan } from "./value-preview";
 
 export function ExpressionField({
@@ -36,6 +37,7 @@ export function ExpressionField({
       <div id={previewId} aria-live="polite">
         {result && <ValuePreview result={result} source={source} />}
       </div>
+      <ReferenceChips source={source} />
     </div>
   );
 }

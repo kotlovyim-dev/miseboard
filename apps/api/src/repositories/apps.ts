@@ -48,3 +48,11 @@ export async function updateAppConfig(
     .returning();
   return app;
 }
+
+export async function deleteUserApp(db: Database, id: string) {
+  const [app] = await db
+    .delete(apps)
+    .where(and(eq(apps.id, id), eq(apps.isTemplate, false)))
+    .returning({ id: apps.id });
+  return app;
+}

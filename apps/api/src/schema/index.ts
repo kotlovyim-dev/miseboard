@@ -13,6 +13,8 @@ import "./revenue-point";
 import "./app";
 import "./create-app";
 import "./save-app";
+import "./delete-app";
+import "./reset-demo";
 
 const RoleEnum = builder.enumType("Role", { values: roles });
 

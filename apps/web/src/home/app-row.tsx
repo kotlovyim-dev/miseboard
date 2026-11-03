@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { IdChip } from "@/components/id-chip";
+import { useRole } from "@/lib/role/use-role";
+import { AppRowMenu } from "./app-row-menu";
 import { SavedAt } from "./saved-at";
 
 export interface AppRowData {
@@ -13,6 +15,8 @@ export interface AppRowData {
 }
 
 export function AppRow({ app }: { app: AppRowData }) {
+  const { canEdit } = useRole();
+
   return (
     <li className="flex items-center gap-2 pr-2 hover:bg-accent/50">
       <Link
@@ -25,6 +29,7 @@ export function AppRow({ app }: { app: AppRowData }) {
           <SavedAt updatedAt={app.updatedAt} />
         </span>
       </Link>
+      {canEdit && <AppRowMenu app={app} />}
     </li>
   );
 }

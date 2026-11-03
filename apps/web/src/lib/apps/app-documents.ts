@@ -24,3 +24,30 @@ export const CreateAppMutation = graphql(`
     }
   }
 `);
+
+export const SaveAppMutation = graphql(`
+  mutation SaveApp($id: ID!, $config: JSON!, $expectedUpdatedAt: DateTime!) {
+    saveApp(id: $id, config: $config, expectedUpdatedAt: $expectedUpdatedAt) {
+      __typename
+      ... on App {
+        id
+        updatedAt
+      }
+      ... on VersionConflict {
+        message
+        latest {
+          id
+          name
+          config
+          updatedAt
+        }
+      }
+    }
+  }
+`);
+
+export const DeleteAppMutation = graphql(`
+  mutation DeleteApp($id: ID!) {
+    deleteApp(id: $id)
+  }
+`);

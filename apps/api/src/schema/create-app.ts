@@ -7,6 +7,7 @@ import { builder } from "./builder";
 builder.mutationFields((t) => ({
   createApp: t.field({
     type: App,
+    authScopes: { admin: true },
     args: {
       name: t.arg.string({ required: true, validate: { minLength: 1, maxLength: 80 } }),
       fromTemplate: t.arg.boolean({ defaultValue: false }),

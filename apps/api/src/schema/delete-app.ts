@@ -8,6 +8,7 @@ import { builder } from "./builder";
 builder.mutationFields((t) => ({
   deleteApp: t.field({
     type: "ID",
+    authScopes: { admin: true },
     args: { id: t.arg.globalID({ required: true, for: App }) },
     resolve: async (_root, args, context) => {
       const { id } = args.id;

@@ -6,6 +6,7 @@ import { Order, OrderStatusEnum } from "./order";
 builder.mutationFields((t) => ({
   updateOrderStatus: t.field({
     type: Order,
+    authScopes: { manager: true },
     args: {
       id: t.arg.globalID({ required: true, for: Order }),
       status: t.arg({ type: OrderStatusEnum, required: true }),

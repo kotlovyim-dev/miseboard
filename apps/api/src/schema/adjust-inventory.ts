@@ -7,6 +7,7 @@ import { InventoryItem } from "./inventory-item";
 builder.mutationFields((t) => ({
   adjustInventory: t.field({
     type: InventoryItem,
+    authScopes: { manager: true },
     args: {
       id: t.arg.globalID({ required: true, for: InventoryItem }),
       delta: t.arg.float({ required: true }),

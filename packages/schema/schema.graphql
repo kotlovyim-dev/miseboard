@@ -1,3 +1,12 @@
+type App implements Node {
+  config: JSON!
+  id: ID!
+  isTemplate: Boolean!
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -28,6 +37,10 @@ type MenuItem implements Node {
 
 type Mutation {
   adjustInventory(delta: Float!, id: ID!): InventoryItem!
+  createApp(fromTemplate: Boolean = false, name: String!): App!
+  deleteApp(id: ID!): ID!
+  resetDemo: Boolean!
+  saveApp(config: JSON!, expectedUpdatedAt: DateTime!, id: ID!): SaveAppResult!
   updateMenuItem(input: UpdateMenuItemInput!): MenuItem!
   updateOrderStatus(id: ID!, status: OrderStatus!): Order!
 }
@@ -78,6 +91,8 @@ type PageInfo {
 }
 
 type Query {
+  app(slug: String!): App
+  apps: [App!]!
   menuItems(category: String): [MenuItem!]!
   node(id: ID!): Node
   nodes(ids: [ID!]!): [Node]!
@@ -99,6 +114,8 @@ enum Role {
   VIEWER
 }
 
+union SaveAppResult = App | VersionConflict
+
 type Subscription {
   orderUpdated(venueId: ID): Order!
 }
@@ -117,6 +134,11 @@ type Venue implements Node {
   name: String!
   orders(after: String, first: Int = 20, status: OrderStatus): OrderConnection!
   revenue(from: DateTime!, to: DateTime!): [RevenuePoint!]!
+}
+
+type VersionConflict {
+  latest: App!
+  message: String!
 }
 
 type Viewer {

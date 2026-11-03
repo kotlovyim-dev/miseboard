@@ -18,7 +18,7 @@ export function LandingFooter() {
             Open the demo
           </LandingButton>
         </div>
-        <ul className="space-y-3 text-lg lg:col-span-3 lg:col-start-10">
+        <ul className="space-y-3 text-lg lg:col-span-3 lg:col-start-10 md:text-right">
           {FOOTER_LINKS.map(({ label, href }) => (
             <li key={label}>
               <a

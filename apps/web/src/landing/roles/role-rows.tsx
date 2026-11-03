@@ -58,7 +58,7 @@ export function RoleRows() {
           <Reveal delay={index * 80}>
             <h3 className="font-display text-heading leading-[0.95]">{title}</h3>
             <p className="mt-3 max-w-[40ch] text-lg">{detail}</p>
-            <div className="mt-5 max-w-md">{crop}</div>
+            <div className="mt-5 max-w-md lg:ml-auto">{crop}</div>
           </Reveal>
         </li>
       ))}
